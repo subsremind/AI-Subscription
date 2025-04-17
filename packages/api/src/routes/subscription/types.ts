@@ -1,12 +1,5 @@
 import { z } from "zod";
 
-export const SubscriptionStatusSchema = z.enum([
-  "active",
-  "canceled",
-  "expired",
-  "paused"
-]);
-
 export const SubscriptionModel = z.object({
   id: z.string(),
   company: z.string(),
@@ -37,27 +30,6 @@ export const SubscriptionCreateInput = SubscriptionModel.omit({
 export const SubscriptionUpdateInput = SubscriptionCreateInput.partial();
 
 export type Subscription = z.infer<typeof SubscriptionModel>;
-export type SubscriptionStatus = z.infer<typeof SubscriptionStatusSchema>;
 export type SubscriptionCreateInput = z.infer<typeof SubscriptionCreateInput>;
 export type SubscriptionUpdateInput = z.infer<typeof SubscriptionUpdateInput>;
 
-export const SubscriptionPlanVariantModel = z.object({
-	id: z.string(),
-	price: z.number(),
-	currency: z.string(),
-	interval: z.string(),
-	interval_count: z.number(),
-});
-
-export const SubscriptionPlanModel = z.object({
-	id: z.string(),
-	name: z.string(),
-	description: z.string().nullable().optional(),
-	storeId: z.string().nullable().optional(),
-	variants: z.array(SubscriptionPlanVariantModel),
-});
-
-export type SubscriptionPlan = z.infer<typeof SubscriptionPlanModel>;
-export type SubscriptionPlanVariant = z.infer<
-	typeof SubscriptionPlanVariantModel
->;
