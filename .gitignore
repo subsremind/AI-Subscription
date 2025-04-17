@@ -1,27 +1,47 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-node_modules
+node_modules/
 .pnp
 .pnp.js
+jspm_packages/
+web_modules/
+bower_components
 
 # testing
 coverage
+*.lcov
+.nyc_output
 
 # next.js
 .next/
 out/
-build
+build/
 .swc/
 
 # misc
 .DS_Store
 *.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+logs
+*.log
+lerna-debug.log*
+.grunt
+.lock-wscript
+.npm
+.eslintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.node_repl_history
+*.tgz
+.yarn-integrity
+.cache
+.parcel-cache
+.nuxt
+.dynamodb/
+.tern-port
+.vscode-test
 
 # local env files
 .env
@@ -42,3 +62,7 @@ dist/
 # other 
 .react-email/
 .content-collections/
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.pnp.*
