@@ -192,6 +192,18 @@
 			"cancel": "Cancel",
 			"confirm": "Confirm"
 		},
+		"actions": {
+			"new": "New",
+			"edit": "Edit",
+			"delete": "Delete",
+			"copy": "Copy",
+			"save": "Save",
+			"cancel": "Cancel",
+			"close": "Close",
+			"confirm": "Confirm",
+			"create": "Create",
+			"update": "Update"
+		},
 		"menu": {
 			"blog": "Blog",
 			"changelog": "Changelog",
@@ -204,6 +216,13 @@
 		},
 		"tableOfContents": {
 			"title": "On this page"
+		},
+		"loading": "Loading...",
+		"status": {
+			"success": "Success",
+			"failure": "Failure",
+			"error": "Error",
+			"warning": "Warning"
 		}
 	},
 	"contact": {
@@ -782,4 +801,5 @@
 			"title": "Categories"
 		}
 	}
+
 }

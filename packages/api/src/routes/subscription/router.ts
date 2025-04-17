@@ -81,9 +81,19 @@ export const subscriptionRouter = new Hono()
       tags: ["Subscription"],
     }),
     async (c) => {
-      const data = c.req.valid("json");
-      const subscription = await db.subscription.create({ data });
-      return c.json(subscription, 201);
+      try {
+        const data = c.req.valid("json");
+        
+        // 业务逻辑验证示例
+        if (data.cycle === "Yearly" && data.frequency > 1) {
+          return c.json({ error: "Yearly subscriptions cannot have frequency > 1" }, 400);
+        }
+
+        const subscription = await db.subscription.create({ data });
+        return c.json(subscription, 201);
+      } catch (error) {
+        return c.json({ error: "Failed to create subscription" }, 400);
+      }
     }
   )
   .patch(

@@ -60,6 +60,18 @@
 			"cancel": "取消",
 			"confirm": "确认"
 		},
+		"actions": {
+			"new": "New",
+			"edit": "Edit",
+			"delete": "Delete",
+			"copy": "Copy",
+			"save": "Save",
+			"cancel": "Cancel",
+			"close": "Close",
+			"confirm": "Confirm",
+			"create": "Create",
+			"update": "Update"
+		},
 		"menu": {
 			"blog": "博客",
 			"changelog": "更新日志",
@@ -72,6 +84,13 @@
 		},
 		"tableOfContents": {
 			"title": "本页内容"
+		},
+		"loading": "Loading...",
+		"status": {
+			"success": "Success",
+			"failure": "Failure",
+			"error": "Error",
+			"warning": "Warning"
 		}
 	},
 	"contact": {
