@@ -197,7 +197,7 @@ model AiChat {
 }
 
 model Category {
-  id        String       @id
+  id        String       @id  @default(cuid())
   name      String
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
@@ -215,7 +215,7 @@ enum CycleType {
 }
 
 model Tag {
-  id        String       @id
+  id        String       @id @default(cuid())
   name      String
   createdAt DateTime      @default(now())
   subscriptions Subscription[]    @relation("SubscriptionTags")
@@ -225,7 +225,7 @@ model Tag {
 }
 
 model SubscriptionTag {
-  id             String       @id
+  id             String       @id @default(cuid())
   subscriptionId String
   subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
   tagId          String
@@ -240,7 +240,7 @@ model SubscriptionTag {
 
 
 model Subscription {
-  id                 String       @id
+  id                 String       @id @default(cuid())
   company            String
   description        String?
   frequency          Int
@@ -252,13 +252,13 @@ model Subscription {
   nextPaymentDate  DateTime?
   contractExpiry    DateTime?
   urlLink           String
-  paymentMethod     String @db.VarChar(30)
+  paymentMethod     String? @db.VarChar(30)
   categoryId         String?
   category           Category?      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   tags        Tag[]               @relation("SubscriptionTags")
   subscriptionTags SubscriptionTag[]
   notes              String?
-  notes_included     Boolean @default(false)
+  notesIncluded     Boolean @default(false)
 
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt

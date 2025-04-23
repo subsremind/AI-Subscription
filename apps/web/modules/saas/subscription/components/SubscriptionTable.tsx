@@ -11,7 +11,7 @@ import {
 import { Button } from "@ui/components/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Spinner } from "@shared/components/Spinner";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
   flexRender,
@@ -24,37 +24,40 @@ import { MoreVerticalIcon, EditIcon, Trash2Icon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@ui/components/dialog"
+import { PlusIcon } from "lucide-react";
 import { SubscriptionForm } from "./SubscriptionForm";
 import { useState } from "react";
+import { formatCurrency } from "@saas/utils/currency";
 
-export function SubscriptionTable() {
+export function SubscriptionTable({ categoryId }: { categoryId?: string }) {
+  const locale = useLocale();
   const t = useTranslations();
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false); // 添加这行
+  const [open, setOpen] = useState(false);
+  const [editingSubscription, setEditingSubscription] = useState<any>(null); // New edit state
   
-  // 获取订阅列表
+  // Get subscription list
   const { data, isLoading } = useQuery({
-    queryKey: ["subscriptions"],
+    queryKey: ["subscriptions", categoryId],
     queryFn: async () => {
-      const response = await fetch("/api/subscriptions");
+      const url = categoryId ? `/api/subscriptions?categoryId=${categoryId}` : '/api/subscriptions';
+      const response = await fetch(url);
       const { subscriptions } = await response.json();
       return subscriptions;
     },
   });
 
-  // 删除订阅
+  // Delete subscription
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const response = await fetch(`/api/subscriptions/${id}`, {
         method: "DELETE",
       });
-      if (!response.ok) throw new Error("删除失败");
+      if (!response.ok) throw new Error("Delete failed");
       return response.json();
     },
     onSuccess: () => {
@@ -69,22 +72,22 @@ export function SubscriptionTable() {
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "company",
-      header: "公司/服务名称",
+      header: "Company",
     },
     {
       accessorKey: "value",
-      header: "金额",
+      header: "Amount",
       cell: ({ row }) => (
         <span>
           {row.original.value ? 
-            `${row.original.value} ${row.original.currency}` : 
+            formatCurrency(row.original.value, row.original.currency) : 
             'N/A'}
         </span>
       ),
     },
     {
       accessorKey: "cycle",
-      header: "周期",
+      header: "Billing Cycle",
       cell: ({ row }) => (
         <span>
           {row.original.frequency} {row.original.cycle}
@@ -93,11 +96,22 @@ export function SubscriptionTable() {
     },
     {
       accessorKey: "nextPaymentDate",
-      header: "下次付款日期",
+      header: "Next Payment Date",
+      cell: ({ row }) => (
+        <span>
+          {row.original.nextPaymentDate ? 
+            new Intl.DateTimeFormat(locale, { 
+              year: 'numeric', 
+              month: 'short', 
+              day: 'numeric' 
+            }).format(new Date(row.original.nextPaymentDate)) : 
+            'N/A'}
+        </span>
+      ),
     },
     {
       accessorKey: "paymentMethod",
-      header: "付款方式",
+      header: "Payment Method",
     },
     {
       id: "actions",
@@ -109,16 +123,19 @@ export function SubscriptionTable() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {
+              setEditingSubscription(row.original);
+              setOpen(true); // Add this line to open dialog
+            }}>
               <EditIcon className="mr-2 size-4" />
-              编辑
+              Edit
             </DropdownMenuItem>
             <DropdownMenuItem 
               className="text-destructive"
               onClick={() => deleteMutation.mutate(row.original.id)}
             >
               <Trash2Icon className="mr-2 size-4" />
-              删除
+              Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -135,20 +152,36 @@ export function SubscriptionTable() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">订阅管理</h2>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <h2 className="text-xl font-bold">Subscription Management</h2>
+        <Dialog 
+          open={open} 
+          onOpenChange={(isOpen) => {
+            setOpen(isOpen);
+            if (!isOpen) setEditingSubscription(null); // Reset edit state when closing dialog
+          }}
+        >
           <DialogTrigger asChild>
-            <Button>{t("common.actions.new")}</Button>
+            <Button variant="ghost"  onClick={() => setEditingSubscription(null)}>
+              <PlusIcon className="size-4" />{t("common.actions.new")}
+            </Button>
           </DialogTrigger>
           <DialogContent 
+            className="w-[45rem] !max-w-[45vw]"
             onInteractOutside={(e) => e.preventDefault()}
             onEscapeKeyDown={(e) => e.preventDefault()}
           >
             <DialogHeader>
-              <DialogTitle>{t("common.actions.new")}</DialogTitle>
+              <DialogTitle>
+                {editingSubscription ? t("common.actions.edit") : t("common.actions.new")}
+              </DialogTitle>
             </DialogHeader>
             <SubscriptionForm 
-              onSuccess={() => setOpen(false)}
+              subscription={editingSubscription}
+              categoryId={categoryId}
+              onSuccess={() => {
+                setOpen(false);
+                setEditingSubscription(null);
+              }}
             />
           </DialogContent>
         </Dialog>
@@ -192,7 +225,7 @@ export function SubscriptionTable() {
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  暂无数据
+                  No data available
                 </TableCell>
               </TableRow>
             )}

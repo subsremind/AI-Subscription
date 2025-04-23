@@ -33,7 +33,7 @@ export const UserAvatar = forwardRef<
 	return (
 		<Avatar ref={ref} className={className}>
 			<AvatarImage src={avatarSrc} />
-			<AvatarFallback className="bg-secondary/10 text-secondary">
+			<AvatarFallback className="bg-primary/10 text-primary">
 				{initials}
 			</AvatarFallback>
 		</Avatar>

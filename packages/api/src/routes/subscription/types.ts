@@ -13,18 +13,31 @@ export const SubscriptionModel = z.object({
   nextPaymentDate: z.string().datetime().optional(),
   contractExpiry: z.string().datetime().optional(),
   urlLink: z.string().url(),
-  paymentMethod: z.string().max(30),
+  paymentMethod: z.string().max(30).optional(),
   categoryId: z.string().optional(),
   notes: z.string().optional(),
   notesIncluded: z.boolean(),
   createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime()
+  updatedAt: z.string().datetime().optional(),
 });
 
-export const SubscriptionCreateInput = SubscriptionModel.omit({ 
-  id: true,
-  createdAt: true,
-  updatedAt: true 
+export const SubscriptionCreateInput = z.object({
+  company: z.string(),
+  description: z.string(),
+  frequency: z.number(),
+  value: z.number(),
+  currency: z.string(),
+  cycle: z.string(),
+  type: z.string(),
+  recurring: z.boolean(),
+  urlLink: z.string(),
+  paymentMethod: z.string().nullable().default(null).optional(),
+  categoryId: z.string().optional(),
+  notes: z.string().optional(),
+  notesIncluded: z.boolean().optional(),
+  nextPaymentDate: z.string().datetime().optional(),
+  contractExpiry: z.string().datetime().optional(),
+  tags: z.array(z.string()).optional(),
 });
 
 export const SubscriptionUpdateInput = SubscriptionCreateInput.partial();

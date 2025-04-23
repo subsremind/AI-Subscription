@@ -22,12 +22,25 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
+	FormDescription
 } from "@ui/components/form";
 import { Input } from "@ui/components/input";
+import { Checkbox } from "@ui/components/checkbox";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+
+import { cn } from "@ui/lib"
+import { Calendar } from "@ui/components/calendar"
+import { format } from "date-fns"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@ui/components/popover"
+
+import { CalendarIcon } from "lucide-react";
 
 const organizationFormSchema = z.object({
 	name: z.string().min(1),
@@ -124,6 +137,76 @@ export function OrganizationForm({
 									</FormItem>
 								)}
 							/>
+
+							<FormField
+								control={form.control}
+								name="dob"
+								render={({ field }) => (
+									<FormItem className="flex flex-col">
+									<FormLabel>Date of birth</FormLabel>
+									<Popover>
+										<PopoverTrigger asChild>
+										<FormControl>
+											<Button
+											variant={"outline"}
+											className={cn(
+													"w-full pl-3 text-left font-normal bg-transparent !text-foreground border border-input cursor-pointer", // 添加了cursor-pointer
+													!field.value && "text-muted-foreground"
+												)}
+											>
+											{field.value ? (
+												format(field.value, "PPP")
+											) : (
+												<span>Pick a date</span>
+											)}
+											<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+											</Button>
+										</FormControl>
+										</PopoverTrigger>
+										<PopoverContent className="w-auto p-0" align="start">
+										<Calendar
+											mode="single"
+											selected={field.value}
+											onSelect={field.onChange}
+											disabled={(date) =>
+											date > new Date() || date < new Date("1900-01-01")
+											}
+											initialFocus
+										/>
+										</PopoverContent>
+									</Popover>
+									<FormDescription>
+										Your date of birth is used to calculate your age.
+									</FormDescription>
+									<FormMessage />
+									</FormItem>
+								)}
+								/>
+
+							<FormField
+								control={form.control}
+								name="mobile"
+								render={({ field }) => (
+									<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+									<FormControl>
+										<Checkbox
+										checked={field.value}
+										onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+									<div className="space-y-1 leading-none">
+										<FormLabel>
+										Use different settings for my mobile devices
+										</FormLabel>
+										<FormDescription>
+										You can manage your mobile notifications in the{" "}
+										</FormDescription>
+									</div>
+									</FormItem>
+								)}
+								/>
+
+
 
 							<div className="flex justify-end">
 								<Button

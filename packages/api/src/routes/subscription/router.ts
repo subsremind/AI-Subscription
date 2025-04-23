@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { z } from "zod";
 import { validator } from "hono-openapi/zod";
+import { nanoid } from "nanoid";
 
 
 import { 
@@ -15,12 +16,18 @@ import { adminMiddleware } from "../../middleware/admin";
 export const subscriptionRouter = new Hono()
   .basePath("/subscriptions")
   .use(adminMiddleware)
+  // Add global error handling
+  .onError((err, c) => {
+    console.error('Error in subscriptionRouter:', err);
+    return c.json({ success: false, error: err.message, details: err  }, 500);
+  })
   .get(
     "/",
     validator(
       "query",
       z.object({
         query: z.string().optional(),
+        categoryId: z.string().optional(),
         limit: z.string().optional().default("10").transform(Number),
         offset: z.string().optional().default("0").transform(Number),
       })
@@ -30,11 +37,12 @@ export const subscriptionRouter = new Hono()
       tags: ["Subscription"],
     }),
     async (c) => {
-      const { query, limit, offset } = c.req.valid("query");
+      const { query, categoryId, limit, offset } = c.req.valid("query");
 
       const subscriptions = await db.subscription.findMany({
         where: {
           company: { contains: query, mode: "insensitive" },
+          ...(categoryId ? { categoryId } : {}),
         },
         include: {
           category: true,
@@ -82,18 +90,36 @@ export const subscriptionRouter = new Hono()
     }),
     async (c) => {
       try {
-        const data = c.req.valid("json");
-        
-        // 业务逻辑验证示例
-        if (data.cycle === "Yearly" && data.frequency > 1) {
-          return c.json({ error: "Yearly subscriptions cannot have frequency > 1" }, 400);
-        }
+        const rawData = c.req.valid("json");
 
-        const subscription = await db.subscription.create({ data });
-        return c.json(subscription, 201);
-      } catch (error) {
-        return c.json({ error: "Failed to create subscription" }, 400);
-      }
+        const { tags = [], categoryId, ...cleanRawData } = rawData;
+
+        const subscriptionTags = tags.map(tagId => ({
+          tagId: tagId, 
+        }));
+        console.log('Received subscriptionTags:', subscriptionTags);
+        
+        const data = {
+          ...cleanRawData,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          category: {connect: {id: categoryId}},
+          subscriptionTags: subscriptionTags.length > 0 
+                  ? { create: subscriptionTags }
+                  : undefined
+        };
+
+          console.log('Received data:', data);
+          const subscription = await db.subscription.create({data});
+          console.log('Created subscription:', subscription);
+          return c.json(subscription, 201);
+        } catch (e) {
+          // console.error('Create subscription error:', e);
+          return c.json({ 
+            error: 'Failed to create subscription',
+            details: e.message || e.toString() 
+          }, 400);
+        }
     }
   )
   .patch(
@@ -106,9 +132,52 @@ export const subscriptionRouter = new Hono()
     async (c) => {
       const id = c.req.param("id");
       const data = c.req.valid("json");
+      
+      const existing = await db.subscription.findUnique({ where: { id } });
+      if (!existing) {
+        return c.json({ error: "Subscription not found" }, 404);
+      }
+  
       const subscription = await db.subscription.update({
         where: { id },
-        data,
+        data: {
+          ...data,
+          updatedAt: new Date()
+        },
+      });
+      return c.json(subscription);
+    }
+  )
+  .put(
+    "/:id",
+    validator("json", SubscriptionCreateInput),
+    describeRoute({
+      summary: "Replace subscription",
+      tags: ["Subscription"],
+    }),
+    async (c) => {
+      const id = c.req.param("id");
+      const rawData = c.req.valid("json");
+  
+      const existing = await db.subscription.findUnique({ where: { id } });
+      if (!existing) {
+        return c.json({ error: "Subscription not found" }, 404);
+      }
+  
+      const { tags = [], categoryId, ...cleanRawData } = rawData;
+      const subscriptionTags = tags.map(tagId => ({ tagId }));
+  
+      const subscription = await db.subscription.update({
+        where: { id },
+        data: {
+          ...cleanRawData,
+          updatedAt: new Date(),
+          category: { connect: { id: categoryId } },
+          subscriptionTags: {
+            deleteMany: {}, // 先删除所有现有标签
+            create: subscriptionTags // 再添加新标签
+          }
+        },
       });
       return c.json(subscription);
     }

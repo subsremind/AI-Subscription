@@ -104,7 +104,7 @@ export const TagScalarFieldEnumSchema = z.enum(['id','name','createdAt']);
 
 export const SubscriptionTagScalarFieldEnumSchema = z.enum(['id','subscriptionId','tagId','createdAt']);
 
-export const SubscriptionScalarFieldEnumSchema = z.enum(['id','company','description','frequency','value','currency','cycle','type','recurring','nextPaymentDate','contractExpiry','urlLink','paymentMethod','categoryId','notes','notes_included','createdAt','updatedAt']);
+export const SubscriptionScalarFieldEnumSchema = z.enum(['id','company','description','frequency','value','currency','cycle','type','recurring','nextPaymentDate','contractExpiry','urlLink','paymentMethod','categoryId','notes','notesIncluded','createdAt','updatedAt']);
 
 export const SortOrderSchema = z.enum(['asc','desc']);
 
@@ -317,7 +317,7 @@ export type AiChat = z.infer<typeof AiChatSchema>
 /////////////////////////////////////////
 
 export const CategorySchema = z.object({
-  id: z.string(),
+  id: z.string().cuid(),
   name: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
@@ -330,7 +330,7 @@ export type Category = z.infer<typeof CategorySchema>
 /////////////////////////////////////////
 
 export const TagSchema = z.object({
-  id: z.string(),
+  id: z.string().cuid(),
   name: z.string(),
   createdAt: z.coerce.date(),
 })
@@ -342,7 +342,7 @@ export type Tag = z.infer<typeof TagSchema>
 /////////////////////////////////////////
 
 export const SubscriptionTagSchema = z.object({
-  id: z.string(),
+  id: z.string().cuid(),
   subscriptionId: z.string(),
   tagId: z.string(),
   createdAt: z.coerce.date(),
@@ -356,7 +356,7 @@ export type SubscriptionTag = z.infer<typeof SubscriptionTagSchema>
 
 export const SubscriptionSchema = z.object({
   cycle: CycleTypeSchema,
-  id: z.string(),
+  id: z.string().cuid(),
   company: z.string(),
   description: z.string().nullable(),
   frequency: z.number().int(),
@@ -367,10 +367,10 @@ export const SubscriptionSchema = z.object({
   nextPaymentDate: z.coerce.date().nullable(),
   contractExpiry: z.coerce.date().nullable(),
   urlLink: z.string(),
-  paymentMethod: z.string(),
+  paymentMethod: z.string().nullable(),
   categoryId: z.string().nullable(),
   notes: z.string().nullable(),
-  notes_included: z.boolean(),
+  notesIncluded: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 })

@@ -40,3 +40,6 @@ div[role="tablist"].bg-secondary {
 input[cmdk-input] {
 	@apply border-none focus-visible:ring-0;
 }
+
+
+

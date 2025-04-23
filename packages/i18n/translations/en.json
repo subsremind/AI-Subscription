@@ -790,13 +790,9 @@
 			"uuid": "uuid"
 		}
 	},
-	"choosePlan": {
-		"title": "Choose your plan",
-		"description": "To continue, please select a plan."
-	},
 	"subscription": {
 		"title": "Subscription",
-		"description": "To continue, please select a plan.",
+		"description": "Manage your subscription.",
 		"categories": {
 			"title": "Categories"
 		}
