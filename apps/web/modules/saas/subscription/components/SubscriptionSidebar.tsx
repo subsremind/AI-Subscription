@@ -113,10 +113,14 @@ export function SubscriptionSidebar({ onCategorySelect, organizationId }: Subscr
   
       setNewCategoryName("");
       toast.success("Category added successfully");
-      queryClient.invalidateQueries(['subscription-categories']);
+      queryClient.invalidateQueries({ queryKey: ['subscription-categories'] });
       setIsDialogOpen(false);
     } catch (error) {
-      toast.error(error.message || "Failed to add category");
+      if (error instanceof Error) {
+        toast.error(error.message || "Failed to add category");
+      } else {
+        toast.error("Failed to add category");
+      }
     } finally {
       setIsAddingCategory(false);
     }
@@ -142,10 +146,14 @@ export function SubscriptionSidebar({ onCategorySelect, organizationId }: Subscr
       }
   
       toast.success("Category updated successfully");
-      queryClient.invalidateQueries(['subscription-categories']);
+      queryClient.invalidateQueries({ queryKey: ['subscription-categories'] });
       setEditingCategory(null);
     } catch (error) {
-      toast.error(error.message || "Failed to update category");
+      if (error instanceof Error) {
+        toast.error(error.message || "Failed to update category");
+      } else {
+        toast.error("Failed to update category");
+      }
     }
   };
   
@@ -162,10 +170,14 @@ export function SubscriptionSidebar({ onCategorySelect, organizationId }: Subscr
       }
   
       toast.success("Category deleted successfully");
-      queryClient.invalidateQueries(['subscription-categories']);
+      queryClient.invalidateQueries({ queryKey: ['subscription-categories'] });
       setDeleteCategoryId(null);
     } catch (error) {
-      toast.error(error.message || "Failed to delete category");
+      if (error instanceof Error) {
+        toast.error(error.message || "Failed to delete category");
+      } else {
+        toast.error("Failed to delete category");
+      }
     }
   };
 
