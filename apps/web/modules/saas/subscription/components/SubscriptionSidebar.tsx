@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@ui/components/dropdown-menu";
 import { EditIcon, Trash2Icon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PlusIcon } from "lucide-react";
 import { Button } from "@ui/components/button";
 import { Input } from "@ui/components/input";
@@ -20,6 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter
 } from "@ui/components/dialog";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -181,10 +182,10 @@ export function SubscriptionSidebar({ onCategorySelect, organizationId }: Subscr
               onChange={(e) => setEditingCategory(prev => prev ? {...prev, name: e.target.value} : null)}
             />
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setEditingCategory(null)}>
+              <Button onClick={() => setEditingCategory(null)}>
                 Cancel
               </Button>
-              <Button onClick={handleEditCategory}>
+              <Button variant="primary" onClick={handleEditCategory}>
                 Confirm
               </Button>
             </div>
@@ -200,10 +201,10 @@ export function SubscriptionSidebar({ onCategorySelect, organizationId }: Subscr
           <div className="grid gap-4 py-4">
             <p>Are you sure you want to delete this category?</p>
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setDeleteCategoryId(null)}>
+              <Button onClick={() => setDeleteCategoryId(null)}>
                 Cancel
               </Button>
-              <Button variant="destructive" onClick={handleDeleteCategory}>
+              <Button variant="primary" onClick={handleDeleteCategory}>
                 Confirm Delete
               </Button>
             </div>
@@ -236,13 +237,17 @@ export function SubscriptionSidebar({ onCategorySelect, organizationId }: Subscr
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
               />
+              
+            </div>
+            <DialogFooter>
               <Button 
+                variant="primary"
                 onClick={handleAddCategory}
                 disabled={isAddingCategory}
               >
                 {isAddingCategory ? "Adding..." : "Confirm"}
               </Button>
-            </div>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

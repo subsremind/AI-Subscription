@@ -55,6 +55,8 @@ export function SubscriptionTable({ categoryId, organizationId }: { categoryId?:
   });
 
   // Delete subscription
+  const [deleteSubscriptionId, setDeleteSubscriptionId] = useState<string | null>(null);
+
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const response = await fetch(`/api/subscription/${id}`, {
@@ -67,6 +69,7 @@ export function SubscriptionTable({ categoryId, organizationId }: { categoryId?:
       queryClient.invalidateQueries({ queryKey: ['subscription-categories'] });
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
       toast.success(t("common.status.success"));
+      setDeleteSubscriptionId(null);
     },
     onError: () => {
       toast.error(t("common.status.error"));
@@ -132,7 +135,7 @@ export function SubscriptionTable({ categoryId, organizationId }: { categoryId?:
             </DropdownMenuItem>
             <DropdownMenuItem 
               className="text-destructive"
-              onClick={() => deleteMutation.mutate(row.original.id)}
+              onClick={() => setDeleteSubscriptionId(row.original.id)}
             >
               <Trash2Icon className="mr-2 size-4" />
               Delete
@@ -186,6 +189,28 @@ export function SubscriptionTable({ categoryId, organizationId }: { categoryId?:
             />
           </DialogContent>
         </Dialog>
+
+      <Dialog open={!!deleteSubscriptionId} onOpenChange={(open) => !open && setDeleteSubscriptionId(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Delete</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <p>Are you sure you want to delete this subscription?</p>
+            <div className="flex gap-2 justify-end">
+              <Button onClick={() => setDeleteSubscriptionId(null)}>
+                Cancel
+              </Button>
+              <Button 
+                variant="primary" 
+                onClick={() => deleteSubscriptionId && deleteMutation.mutate(deleteSubscriptionId)}
+              >
+                Confirm
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
       </div>
       
       {isLoading ? (

@@ -535,11 +535,12 @@ export function SubscriptionForm({ subscription, onSuccess, categoryId, organiza
         />
         
 
-        <div className="col-span-2">
+        <div className="col-span-2 w-full flex justify-end">
           <Button 
+            variant="primary"
             type="submit" 
             loading={form.formState.isSubmitting}
-            className="w-full"
+            className="flex items-center space-x-2"
           >
             {t("common.confirmation.confirm")}
           </Button>
