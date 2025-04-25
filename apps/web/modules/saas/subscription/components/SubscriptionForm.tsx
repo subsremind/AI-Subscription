@@ -64,7 +64,7 @@ const formSchema = z.object({
   contractExpiry: z.string().datetime().optional(),
   urlLink: z.string().optional(),
   paymentMethod: z.string().nullable().default(null),
-  categoryId: z.string().min(1, "Category cannot be empty"),
+  categoryId: z.string().nullable().default(null),
   notes: z.string().optional(),
   notesIncluded: z.boolean(),
   tags: z.array(z.string()).optional(),
@@ -72,10 +72,11 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function SubscriptionForm({ subscription, onSuccess, categoryId }: { 
+export function SubscriptionForm({ subscription, onSuccess, categoryId, organizationId }: { 
   subscription?: any;
   onSuccess: () => void;
   categoryId?: string;
+  organizationId?: string;
 }) {
   const t = useTranslations();
   const router = useRouter();
@@ -83,12 +84,13 @@ export function SubscriptionForm({ subscription, onSuccess, categoryId }: {
 
         
   const { data: categories = [], isLoading: isLoadingCategories } = useQuery({
-    queryKey: ['subscription-categories'],
+    queryKey: ['subscription-categories-select', organizationId],
     queryFn: async () => {
-    const response = await fetch('/api/subscription-categories');
-    if (!response.ok) throw new Error('Failed to fetch categories');
-    return response.json();
-    }
+      const url = organizationId ? `/api/subscription-categories/select?organizationId=${organizationId}` : '/api/subscription-categories/select';
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to fetch categories');
+      return await response.json();
+      }
   });
   
   const form = useForm<FormValues>({
@@ -121,7 +123,7 @@ export function SubscriptionForm({ subscription, onSuccess, categoryId }: {
 
   const onSubmit = form.handleSubmit(async (data) => {
     try {
-      const url = subscription ? `/api/subscriptions/${subscription.id}` : '/api/subscriptions';
+      const url = subscription ? `/api/subscription/${subscription.id}` : '/api/subscription';
       const method = subscription ? 'PUT' : 'POST';
       
       const response = await fetch(url, {
@@ -129,15 +131,19 @@ export function SubscriptionForm({ subscription, onSuccess, categoryId }: {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          organizationId
+        }),
       });
 
       if (!response.ok) {
         throw new Error(subscription ? "Failed to update subscription" : "Failed to create subscription");
       }
 
+      queryClient.invalidateQueries({ queryKey: ['subscription-categories'] });
       queryClient.invalidateQueries({
-        queryKey: ["subscriptions"],
+        queryKey: ["subscription"],
       });
 
       toast.success(t("common.status.success"));
@@ -475,6 +481,9 @@ export function SubscriptionForm({ subscription, onSuccess, categoryId }: {
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value={null}>
+              None
+            </SelectItem>
             {categories.map((category: { id: string, name: string }) => (
             <SelectItem key={category.id} value={category.id}>
             {category.name}

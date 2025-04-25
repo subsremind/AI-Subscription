@@ -302,7 +302,9 @@
 		"account": {
 			"avatar": "Avatar",
 			"avatarDescription": "Click the circle or drop an image to it to upload your avatar.",
-			"name": "Name"
+			"name": "Name",
+			"timezone": "Timezone",
+			"timezonePlaceholder": "Select your timezone"
 		},
 		"continue": "Continue",
 		"message": "Just a few quick steps to get you started.",
@@ -561,6 +563,14 @@
 					"success": "Language was updated successfully"
 				},
 				"title": "Your language"
+			},
+			"timezone": {
+				"description": "To change the timezone of the app for your account, select a timezone from the list and click save.",
+				"notifications": {
+					"error": "Could not update timezone",
+					"success": "Timezone was updated successfully"
+				},
+				"title": "Your timezone"
 			},
 			"security": {
 				"activeSessions": {

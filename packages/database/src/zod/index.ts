@@ -78,7 +78,7 @@ export const isValidDecimalInput =
 
 export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCommitted','RepeatableRead','Serializable']);
 
-export const UserScalarFieldEnumSchema = z.enum(['id','name','email','emailVerified','image','createdAt','updatedAt','username','role','banned','banReason','banExpires','onboardingComplete','paymentsCustomerId','locale']);
+export const UserScalarFieldEnumSchema = z.enum(['id','name','email','emailVerified','image','createdAt','updatedAt','username','role','banned','banReason','banExpires','onboardingComplete','paymentsCustomerId','locale','timezone']);
 
 export const SessionScalarFieldEnumSchema = z.enum(['id','expiresAt','ipAddress','userAgent','userId','impersonatedBy','activeOrganizationId','token','createdAt','updatedAt']);
 
@@ -98,13 +98,13 @@ export const PurchaseScalarFieldEnumSchema = z.enum(['id','organizationId','user
 
 export const AiChatScalarFieldEnumSchema = z.enum(['id','organizationId','userId','title','messages','createdAt','updatedAt']);
 
-export const CategoryScalarFieldEnumSchema = z.enum(['id','name','createdAt','updatedAt']);
+export const CategoryScalarFieldEnumSchema = z.enum(['id','name','createdAt','updatedAt','organizationId','userId']);
 
 export const TagScalarFieldEnumSchema = z.enum(['id','name','createdAt']);
 
 export const SubscriptionTagScalarFieldEnumSchema = z.enum(['id','subscriptionId','tagId','createdAt']);
 
-export const SubscriptionScalarFieldEnumSchema = z.enum(['id','company','description','frequency','value','currency','cycle','type','recurring','nextPaymentDate','contractExpiry','urlLink','paymentMethod','categoryId','notes','notesIncluded','createdAt','updatedAt']);
+export const SubscriptionScalarFieldEnumSchema = z.enum(['id','company','description','frequency','value','currency','cycle','type','recurring','nextPaymentDate','contractExpiry','urlLink','paymentMethod','categoryId','notes','notesIncluded','createdAt','updatedAt','organizationId','userId']);
 
 export const SortOrderSchema = z.enum(['asc','desc']);
 
@@ -148,6 +148,7 @@ export const UserSchema = z.object({
   onboardingComplete: z.boolean(),
   paymentsCustomerId: z.string().nullable(),
   locale: z.string().nullable(),
+  timezone: z.string().nullable(),
 })
 
 export type User = z.infer<typeof UserSchema>
@@ -321,6 +322,8 @@ export const CategorySchema = z.object({
   name: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  organizationId: z.string().nullable(),
+  userId: z.string().nullable(),
 })
 
 export type Category = z.infer<typeof CategorySchema>
@@ -373,6 +376,8 @@ export const SubscriptionSchema = z.object({
   notesIncluded: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  organizationId: z.string().nullable(),
+  userId: z.string().nullable(),
 })
 
 export type Subscription = z.infer<typeof SubscriptionSchema>

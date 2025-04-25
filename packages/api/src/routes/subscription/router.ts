@@ -3,24 +3,18 @@ import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { z } from "zod";
 import { validator } from "hono-openapi/zod";
-import { nanoid } from "nanoid";
+import { verifyOrganizationMembership } from "../organizations/lib/membership";
 
 
 import { 
-  SubscriptionModel,
   SubscriptionCreateInput,
   SubscriptionUpdateInput
 } from "./types";
-import { adminMiddleware } from "../../middleware/admin";
+import { authMiddleware } from "../../middleware/auth";
 
 export const subscriptionRouter = new Hono()
-  .basePath("/subscriptions")
-  .use(adminMiddleware)
-  // Add global error handling
-  .onError((err, c) => {
-    console.error('Error in subscriptionRouter:', err);
-    return c.json({ success: false, error: err.message, details: err  }, 500);
-  })
+  .basePath("/subscription")
+  .use(authMiddleware)
   .get(
     "/",
     validator(
@@ -28,8 +22,7 @@ export const subscriptionRouter = new Hono()
       z.object({
         query: z.string().optional(),
         categoryId: z.string().optional(),
-        limit: z.string().optional().default("10").transform(Number),
-        offset: z.string().optional().default("0").transform(Number),
+        organizationId: z.string().optional(),
       })
     ),
     describeRoute({
@@ -37,25 +30,24 @@ export const subscriptionRouter = new Hono()
       tags: ["Subscription"],
     }),
     async (c) => {
-      const { query, categoryId, limit, offset } = c.req.valid("query");
+
+      const { query, categoryId, organizationId} = c.req.valid("query");
 
       const subscriptions = await db.subscription.findMany({
         where: {
           company: { contains: query, mode: "insensitive" },
           ...(categoryId ? { categoryId } : {}),
+          ...(organizationId 
+            ? { organizationId }
+            : { 
+                userId: c.get('user').id,
+                organizationId: null 
+              }),
         },
-        include: {
-          category: true,
-          tags: true
-        },
-        take: limit,
-        skip: offset,
         orderBy: { createdAt: "desc" },
       });
 
-      const total = await db.subscription.count();
-
-      return c.json({ subscriptions, total });
+      return c.json(subscriptions);
     }
   )
   .get(
@@ -91,30 +83,33 @@ export const subscriptionRouter = new Hono()
     async (c) => {
       try {
         const rawData = c.req.valid("json");
+        const user = c.get("user");
+        const { tags = [], categoryId, organizationId, ...cleanRawData } = rawData;
 
-        const { tags = [], categoryId, ...cleanRawData } = rawData;
+        if (organizationId) {
+          await verifyOrganizationMembership(organizationId, user.id);
+        }
 
         const subscriptionTags = tags.map(tagId => ({
           tagId: tagId, 
         }));
-        console.log('Received subscriptionTags:', subscriptionTags);
         
         const data = {
           ...cleanRawData,
+          organization: organizationId ? { connect: { id: organizationId } } : undefined,
+          user: { connect: { id: user.id } },
           createdAt: new Date(),
           updatedAt: new Date(),
-          category: {connect: {id: categoryId}},
+          category: categoryId === 'all' ? undefined : {connect: {id: categoryId}},
           subscriptionTags: subscriptionTags.length > 0 
                   ? { create: subscriptionTags }
                   : undefined
         };
 
-          console.log('Received data:', data);
-          const subscription = await db.subscription.create({data});
-          console.log('Created subscription:', subscription);
+        console.log('Creating subscription with data:', data);
+        const subscription = await db.subscription.create({ data });
           return c.json(subscription, 201);
         } catch (e) {
-          // console.error('Create subscription error:', e);
           return c.json({ 
             error: 'Failed to create subscription',
             details: e.message || e.toString() 
@@ -132,6 +127,11 @@ export const subscriptionRouter = new Hono()
     async (c) => {
       const id = c.req.param("id");
       const data = c.req.valid("json");
+
+      const user = c.get("user");
+      if (data.organizationId) {
+				await verifyOrganizationMembership(data.organizationId, user.id);
+			}
       
       const existing = await db.subscription.findUnique({ where: { id } });
       if (!existing) {
@@ -156,30 +156,41 @@ export const subscriptionRouter = new Hono()
       tags: ["Subscription"],
     }),
     async (c) => {
-      const id = c.req.param("id");
-      const rawData = c.req.valid("json");
-  
-      const existing = await db.subscription.findUnique({ where: { id } });
-      if (!existing) {
-        return c.json({ error: "Subscription not found" }, 404);
+      try {
+        const id = c.req.param("id");
+        const rawData = c.req.valid("json");
+    
+        const existing = await db.subscription.findUnique({ where: { id } });
+        if (!existing) {
+          return c.json({ error: "Subscription not found" }, 404);
+        }
+    
+        const { tags = [],  ...cleanRawData } = rawData;
+        const subscriptionTags = tags.map(tagId => ({ tagId }));
+    
+        const subscription = await db.subscription.update({
+          where: { 
+            id
+          },
+          data: {
+            ...cleanRawData,
+            updatedAt: new Date(),
+            categoryId: rawData.categoryId=== ''
+              ? null
+               : rawData.categoryId,
+            subscriptionTags: {
+              deleteMany: {}, 
+              create: subscriptionTags 
+            },
+          },
+        });
+        return c.json(subscription);
+      } catch (e) {
+        return c.json({ 
+          error: 'Failed to update subscription',
+          details: e.message || e.toString() 
+        }, 400);
       }
-  
-      const { tags = [], categoryId, ...cleanRawData } = rawData;
-      const subscriptionTags = tags.map(tagId => ({ tagId }));
-  
-      const subscription = await db.subscription.update({
-        where: { id },
-        data: {
-          ...cleanRawData,
-          updatedAt: new Date(),
-          category: { connect: { id: categoryId } },
-          subscriptionTags: {
-            deleteMany: {}, // 先删除所有现有标签
-            create: subscriptionTags // 再添加新标签
-          }
-        },
-      });
-      return c.json(subscription);
     }
   )
   .delete(
@@ -190,7 +201,11 @@ export const subscriptionRouter = new Hono()
     }),
     async (c) => {
       const id = c.req.param("id");
-      await db.subscription.delete({ where: { id } });
+      await db.subscription.delete({ 
+        where: { 
+          id
+        } 
+      });
       return c.json({ success: true });
     }
   );

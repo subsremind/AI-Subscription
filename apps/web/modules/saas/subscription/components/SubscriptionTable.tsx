@@ -32,9 +32,9 @@ import { PlusIcon } from "lucide-react";
 import { SubscriptionForm } from "./SubscriptionForm";
 import { useState } from "react";
 import { formatCurrency } from "@saas/utils/currency";
+import { formatDateWithTimezone } from "@saas/utils/timezone";
 
-export function SubscriptionTable({ categoryId }: { categoryId?: string }) {
-  const locale = useLocale();
+export function SubscriptionTable({ categoryId, organizationId }: { categoryId?: string; organizationId?: string }) {
   const t = useTranslations();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -42,26 +42,30 @@ export function SubscriptionTable({ categoryId }: { categoryId?: string }) {
   
   // Get subscription list
   const { data, isLoading } = useQuery({
-    queryKey: ["subscriptions", categoryId],
+    queryKey: ["subscription", categoryId, organizationId],
     queryFn: async () => {
-      const url = categoryId ? `/api/subscriptions?categoryId=${categoryId}` : '/api/subscriptions';
+      let url = '/api/subscription';
+      const params = new URLSearchParams();
+      if (categoryId) params.append('categoryId', categoryId);
+      if (organizationId) params.append('organizationId', organizationId);
+      url += `?${params.toString()}`;
       const response = await fetch(url);
-      const { subscriptions } = await response.json();
-      return subscriptions;
+      return await response.json(); // Directly return the array from API
     },
   });
 
   // Delete subscription
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/api/subscriptions/${id}`, {
+      const response = await fetch(`/api/subscription/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Delete failed");
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ['subscription-categories'] });
+      queryClient.invalidateQueries({ queryKey: ["subscription"] });
       toast.success(t("common.status.success"));
     },
     onError: () => {
@@ -100,11 +104,7 @@ export function SubscriptionTable({ categoryId }: { categoryId?: string }) {
       cell: ({ row }) => (
         <span>
           {row.original.nextPaymentDate ? 
-            new Intl.DateTimeFormat(locale, { 
-              year: 'numeric', 
-              month: 'short', 
-              day: 'numeric' 
-            }).format(new Date(row.original.nextPaymentDate)) : 
+            formatDateWithTimezone(row.original.nextPaymentDate) : 
             'N/A'}
         </span>
       ),
@@ -178,6 +178,7 @@ export function SubscriptionTable({ categoryId }: { categoryId?: string }) {
             <SubscriptionForm 
               subscription={editingSubscription}
               categoryId={categoryId}
+              organizationId={organizationId}
               onSuccess={() => {
                 setOpen(false);
                 setEditingSubscription(null);

@@ -5,6 +5,7 @@ export type Config = {
 		defaultLocale: string;
 		defaultCurrency: string;
 		localeCookieName: string;
+		timezoneCookieName: string;
 	};
 	organizations: {
 		enable: boolean;

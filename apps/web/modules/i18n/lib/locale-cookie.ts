@@ -12,3 +12,12 @@ export async function getUserLocale() {
 export async function setLocaleCookie(locale: Locale) {
 	(await cookies()).set(config.i18n.localeCookieName, locale);
 }
+
+export async function getUserTimezone() {
+	const cookie = (await cookies()).get(config.i18n.timezoneCookieName);
+	return cookie?.value ?? new Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+export async function setTimezoneCookie(timezone: string) {
+	(await cookies()).set(config.i18n.timezoneCookieName, timezone);
+}

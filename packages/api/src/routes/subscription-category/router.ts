@@ -1,9 +1,10 @@
 import { db } from "@repo/database";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
-import { z } from "zod";
 import { validator } from "hono-openapi/zod";
-import { adminMiddleware } from "../../middleware/admin";
+import { authMiddleware } from "../../middleware/auth";
+import { verifyOrganizationMembership } from "../organizations/lib/membership";
+import { z } from "zod";
 
 
 import { 
@@ -11,30 +12,76 @@ import {
   CategoryCreateInput,
   CategoryUpdateInput
 } from "./types";
+import { log } from "console";
+import { logger } from "@repo/logs";
 
 export const subscriptionCategoryRouter = new Hono()
   .basePath("/subscription-categories")
-  .use(adminMiddleware)
-  .onError((err, c) => {
-    console.error('Error in subscriptionCategoryRouter:', err);
-    return c.json({ success: false, error: err.message }, 500);
-  })
+  .use(authMiddleware)
   .get(
     "/",
     describeRoute({
       summary: "Get all subscription categories",
       tags: ["SubscriptionCategory"],
     }),
+    validator(
+			"query",
+			z.object({ organizationId: z.string().optional() }).optional(),
+		),
     async (c) => {
+      const query = c.req.valid("query") || {};
+      const categories = await db.category.findMany({
+        select: { 
+          id: true, 
+          name: true, 
+          organizationId: true,
+          userId: true,
+          _count: { select: { subscriptions: true } },
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: { name: "asc" },
+        where: query?.organizationId
+					? {
+							organizationId: query.organizationId,
+						}
+					: {
+							userId: c.get("user").id,
+							organizationId: null,
+						},
+			});
+
+      return c.json(categories.map(category => ({
+        ...category,
+        subscriptionCount: category._count?.subscriptions || 0
+      })));
+    }
+  )
+  .get(
+    "/select",
+    describeRoute({
+      summary: "Get all subscription categories",
+      tags: ["SubscriptionCategory"],
+    }),
+    validator(
+			"query",
+			z.object({ organizationId: z.string().optional() }).optional(),
+		),
+    async (c) => {
+      const query = c.req.valid("query") || {};
       const categories = await db.category.findMany({
         orderBy: { name: "asc" },
-        include: {
-          _count: {
-            select: { subscriptions: true }
-          }
-        }
-      });
-      return c.json(CategorySchema.array().parse(categories));
+        where: query?.organizationId
+					? {
+							organizationId: query.organizationId,
+						}
+					: {
+							userId: c.get("user").id,
+							organizationId: null,
+						},
+			});
+
+       return c.json(CategorySchema.array().parse(categories));
     }
   )
   .post(
@@ -45,9 +92,18 @@ export const subscriptionCategoryRouter = new Hono()
       tags: ["SubscriptionCategory"],
     }),
     async (c) => {
-      const { name } = c.req.valid("json");
+      const { name, organizationId } = c.req.valid("json");
+      const user = c.get("user");
+
+			if (organizationId) {
+				await verifyOrganizationMembership(organizationId, user.id);
+			}
       const category = await db.category.create({
-        data: { name }
+        data: { 
+          name,
+          userId: user.id,
+          organizationId
+        }
       });
       return c.json(category, 201);
     }
@@ -61,11 +117,18 @@ export const subscriptionCategoryRouter = new Hono()
     }),
     async (c) => {
       const id = c.req.param("id");
-      const { name } = c.req.valid("json");
+      const { name, organizationId } = c.req.valid("json");
+
+      const user = c.get("user");
+      if (organizationId) {
+				await verifyOrganizationMembership(organizationId, user.id);
+			}
       
       const category = await db.category.update({
         where: { id },
-        data: { name }
+        data: { 
+          name
+        }
       });
       return c.json(category);
     }

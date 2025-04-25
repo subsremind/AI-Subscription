@@ -25,6 +25,9 @@ export async function sendEmail<T extends TemplateId>(
 	),
 ) {
 	const { to, locale = config.i18n.defaultLocale } = params;
+	if (!to || typeof to !== 'string' || !to.includes('@')) {
+		throw new Error('Invalid email address format');
+	}
 
 	let html: string;
 	let text: string;
@@ -55,7 +58,16 @@ export async function sendEmail<T extends TemplateId>(
 		});
 		return true;
 	} catch (e) {
-		logger.error(e);
+		logger.error("send Failed to send email:", e);
+		if (e instanceof Error) {
+			logger.error("Error stack:", e.stack);
+		}
+		logger.error("Email provider config:", {
+			host: process.env.MAIL_HOST,
+			port: process.env.MAIL_PORT,
+			user: process.env.MAIL_USER,
+			pass: process.env.MAIL_PASS,
+		});
 		return false;
 	}
 }

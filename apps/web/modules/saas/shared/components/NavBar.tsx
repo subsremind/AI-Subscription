@@ -45,6 +45,14 @@ export function NavBar() {
 			icon: BotMessageSquareIcon,
 			isActive: pathname.includes("/chatbot"),
 		},
+		{
+			label: t("app.menu.subscription"),
+			href: activeOrganization
+				? `/app/${activeOrganization.slug}/subscription`
+				: "/app/subscription",
+			icon: SettingsIcon,
+			isActive: pathname.includes("/subscription"),
+		},
 		...(activeOrganization
 			? [
 					{
@@ -69,15 +77,7 @@ export function NavBar() {
 						href: "/app/admin",
 						icon: UserCogIcon,
 						isActive: pathname.startsWith("/app/admin/"),
-					},
-					{
-						label: t("app.menu.subscription"),
-						href: activeOrganization
-							? `/app/${activeOrganization.slug}/subscription`
-							: "/app/subscription",
-						icon: SettingsIcon,
-						isActive: pathname.includes("/subscription"),
-					},
+					}
 				]
 			: []),
 	];

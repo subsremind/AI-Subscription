@@ -4,6 +4,7 @@ import { ChangeEmailForm } from "@saas/settings/components/ChangeEmailForm";
 import { ChangeNameForm } from "@saas/settings/components/ChangeNameForm";
 import { UserAvatarForm } from "@saas/settings/components/UserAvatarForm";
 import { UserLanguageForm } from "@saas/settings/components/UserLanguageForm";
+import { UserTimeZoneForm } from "@saas/settings/components/UserTimeZoneForm";
 import { SettingsList } from "@saas/shared/components/SettingsList";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
@@ -27,6 +28,7 @@ export default async function AccountSettingsPage() {
 		<SettingsList>
 			<UserAvatarForm />
 			{config.i18n.enabled && <UserLanguageForm />}
+			<UserTimeZoneForm />
 			<ChangeNameForm />
 			<ChangeEmailForm />
 		</SettingsList>

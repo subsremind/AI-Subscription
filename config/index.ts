@@ -27,6 +27,8 @@ export const config = {
 		defaultCurrency: "USD",
 		// The name of the cookie that is used to determine the locale
 		localeCookieName: "NEXT_LOCALE",
+		// The name of the cookie that is used to determine the timezone
+		timezoneCookieName: "NEXT_TIMEZONE"
 	},
 	// Organizations
 	organizations: {
@@ -53,7 +55,8 @@ export const config = {
 		// Whether billing should be enabled for users (above you can enable it for organizations instead)
 		enableBilling: true,
 		// Whether you want the user to go through an onboarding form after signup (can be defined in the OnboardingForm.tsx)
-		enableOnboarding: true,
+		enableOnboarding: true
+		
 	},
 	// Authentication
 	auth: {
@@ -77,7 +80,7 @@ export const config = {
 	// Mails
 	mails: {
 		// the from address for mails
-		from: "hello@your-domain.com",
+		from: "zhoujun3707@163.com",
 	},
 	// Frontend
 	ui: {
@@ -109,7 +112,7 @@ export const config = {
 		// whether the contact form should be enabled
 		enabled: true,
 		// the email to which the contact form messages should be sent
-		to: "hello@your-domain.com",
+		to: "zhoujun3707@163.com",
 		// the subject of the email
 		subject: "Contact form message",
 	},

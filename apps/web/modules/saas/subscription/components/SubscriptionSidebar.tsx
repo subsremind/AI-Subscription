@@ -22,19 +22,36 @@ import {
   DialogTrigger,
 } from "@ui/components/dialog";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface SubscriptionSidebarProps {
   onCategorySelect: (id: string | null) => void;
 }
 
-export function SubscriptionSidebar({ onCategorySelect }: SubscriptionSidebarProps) {
+export function SubscriptionSidebar({ onCategorySelect, organizationId }: SubscriptionSidebarProps & { organizationId?: string }) {
   const t = useTranslations();
   const queryClient = useQueryClient();
   
-  const [subscriptionCategories, setSubscriptionCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data: subscriptionCategories = [], isLoading, error } = useQuery({
+    queryKey: ['subscription-categories', organizationId],
+    queryFn: async () => {
+      const url = organizationId ? `/api/subscription-categories?organizationId=${organizationId}` : '/api/subscription-categories';
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid data format received');
+      }
+
+      return [{ id: 'all', name: 'All', subscriptionCount: data.reduce((acc, cat) => acc + (cat.subscriptionCount || 0), 0) }, ...data];
+    },
+  });
+
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -42,36 +59,7 @@ export function SubscriptionSidebar({ onCategorySelect }: SubscriptionSidebarPro
   const [deleteCategoryId, setDeleteCategoryId] = useState<string | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await fetch('/api/subscription-categories');
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        
-        if (!Array.isArray(data)) {
-          throw new Error('Invalid data format received');
-        }
-
-        setSubscriptionCategories([{ id: 'all', name: 'All' }, ...data]);
-      } catch (error) {
-        setError(error.message || 'Failed to fetch categories');
-        setSubscriptionCategories([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center p-4">
         <span>Loading categories...</span>
@@ -82,7 +70,7 @@ export function SubscriptionSidebar({ onCategorySelect }: SubscriptionSidebarPro
   if (error) {
     return (
       <div className="p-4 text-red-500">
-        <p>Error: {error}</p>
+        <p>Error: {error.message}</p>
         <button 
           onClick={() => window.location.reload()}
           className="mt-2 text-sm underline"
@@ -115,15 +103,13 @@ export function SubscriptionSidebar({ onCategorySelect }: SubscriptionSidebarPro
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: newCategoryName }),
+        body: JSON.stringify({ name: newCategoryName, organizationId }),
       });
   
       if (!response.ok) {
         throw new Error(await response.text());
       }
   
-      const newCategory = await response.json();
-      setSubscriptionCategories(prev => [...prev, newCategory]);
       setNewCategoryName("");
       toast.success("Category added successfully");
       queryClient.invalidateQueries(['subscription-categories']);
@@ -147,17 +133,13 @@ export function SubscriptionSidebar({ onCategorySelect }: SubscriptionSidebarPro
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: editingCategory.name }),
+        body: JSON.stringify({ name: editingCategory.name, organizationId }),
       });
   
       if (!response.ok) {
         throw new Error(await response.text());
       }
   
-      const updatedCategory = await response.json();
-      setSubscriptionCategories(prev => 
-        prev.map(cat => cat.id === editingCategory.id ? updatedCategory : cat)
-      );
       toast.success("Category updated successfully");
       queryClient.invalidateQueries(['subscription-categories']);
       setEditingCategory(null);
@@ -178,9 +160,6 @@ export function SubscriptionSidebar({ onCategorySelect }: SubscriptionSidebarPro
         throw new Error(await response.text());
       }
   
-      setSubscriptionCategories(prev => 
-        prev.filter(cat => cat.id !== deleteCategoryId)
-      );
       toast.success("Category deleted successfully");
       queryClient.invalidateQueries(['subscription-categories']);
       setDeleteCategoryId(null);
@@ -278,25 +257,32 @@ export function SubscriptionSidebar({ onCategorySelect }: SubscriptionSidebarPro
               onCategorySelect(newSelectedId);
             }}
           >
-            <span className={`font-medium ${selectedCategoryId === category.id ? 'text-primary' : ''}`}>{category.name}</span>
-            <DropdownMenu>
-              <DropdownMenuTrigger>
-                <MoreVerticalIcon className="size-4" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setEditingCategory(category)}>
-                  <EditIcon className="mr-2 h-4 w-4" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="text-destructive"
-                  onClick={() => setDeleteCategoryId(category.id)}
-                >
-                  <Trash2Icon className="mr-2 h-4 w-4" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <span className={`font-medium ${selectedCategoryId === category.id ? 'text-primary' : ''}`}>
+              <div className="flex items-center gap-2">
+              <span className="truncate max-w-[155px]">{category.name}</span>
+              <span>({category.subscriptionCount})</span>
+            </div>
+            </span>
+            {category.id !== 'all' && (
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <MoreVerticalIcon className="size-4" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => setEditingCategory(category)}>
+                    <EditIcon className="mr-2 h-4 w-4" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="text-destructive"
+                    onClick={() => setDeleteCategoryId(category.id)}
+                  >
+                    <Trash2Icon className="mr-2 h-4 w-4" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </Card>
         ))}
       </div>
