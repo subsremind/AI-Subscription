@@ -66,14 +66,9 @@ export function SubscriptionSidebar({
 		queryKey: ["total-subscriptions", organizationId],
 		queryFn: async () => {
 			const url = organizationId
-				? `/api/subscription/count?organizationId=${organizationId}`
-				: "/api/subscription/count";
-			const response = await fetch(url, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
+				? `/api/subscription-categories/subscription-count?organizationId=${organizationId}`
+				: "/api/subscription-categories/subscription-count";
+			const response = await fetch(url);
 
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);
