@@ -12,8 +12,6 @@ import {
   CategoryCreateInput,
   CategoryUpdateInput
 } from "./types";
-import { log } from "console";
-import { logger } from "@repo/logs";
 
 export const subscriptionCategoryRouter = new Hono()
   .basePath("/subscription-categories")

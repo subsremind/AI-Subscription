@@ -275,7 +275,7 @@ export function LoginForm() {
 							<Button
 								className="w-full"
 								type="submit"
-								variant="secondary"
+								variant="primary"
 								loading={form.formState.isSubmitting}
 							>
 								{signinMode === "magic-link"
@@ -296,7 +296,7 @@ export function LoginForm() {
 								</p>
 							</div>
 
-							<div className="grid grid-cols-1 items-stretch gap-2 sm:grid-cols-2">
+							<div className="grid grid-cols-1 items-stretch gap-2 sm:grid-cols-2 ">
 								{config.auth.enableSignup &&
 									config.auth.enableSocialLogin &&
 									Object.keys(oAuthProviders).map(
@@ -312,7 +312,6 @@ export function LoginForm() {
 
 								{config.auth.enablePasskeys && (
 									<Button
-										variant="outline"
 										className="w-full sm:col-span-2"
 										onClick={() => signInWithPasskey()}
 									>

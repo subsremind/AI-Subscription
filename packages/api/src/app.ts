@@ -30,13 +30,13 @@ const appRouter = app
 	.route("/", webhooksRouter)
 	.route("/", aiRouter)
 	.route("/", uploadsRouter)
-	.route("/", subscriptionRouter)
-	.route("/", subscriptionCategoryRouter)
 	.route("/", contactRouter)
 	.route("/", newsletterRouter)
 	.route("/", organizationsRouter)
 	.route("/", adminRouter)
-	.route("/", healthRouter);
+	.route("/", healthRouter)
+	.route("/", subscriptionRouter)
+	.route("/", subscriptionCategoryRouter);
 
 app.get(
 	"/app-openapi",
