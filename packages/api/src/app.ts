@@ -15,6 +15,7 @@ import { contactRouter } from "./routes/contact/router";
 import { healthRouter } from "./routes/health";
 import { newsletterRouter } from "./routes/newsletter";
 import { organizationsRouter } from "./routes/organizations/router";
+import { paymentsRouter } from "./routes/payments/router";
 import { subscriptionCategoryRouter } from "./routes/subscription-category/router";
 import { subscriptionRouter } from "./routes/subscription/router";
 import { uploadsRouter } from "./routes/uploads";
@@ -30,6 +31,7 @@ const appRouter = app
 	.route("/", webhooksRouter)
 	.route("/", aiRouter)
 	.route("/", uploadsRouter)
+	.route("/", paymentsRouter)
 	.route("/", contactRouter)
 	.route("/", newsletterRouter)
 	.route("/", organizationsRouter)
