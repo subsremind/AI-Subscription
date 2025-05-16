@@ -106,6 +106,12 @@ export const SubscriptionTagScalarFieldEnumSchema = z.enum(['id','subscriptionId
 
 export const SubscriptionScalarFieldEnumSchema = z.enum(['id','company','description','frequency','value','currency','cycle','type','recurring','nextPaymentDate','contractExpiry','urlLink','paymentMethod','categoryId','notes','notesIncluded','createdAt','updatedAt','organizationId','userId']);
 
+export const EditHistoryScalarFieldEnumSchema = z.enum(['id','tableName','tableField','tableId','fromValue','toValue','createdBy','createdAt']);
+
+export const SubscriptionAlertScalarFieldEnumSchema = z.enum(['id','subscriptionId','intervalValue','intervalUnit','onField','contact','createdAt','updatedAt','userId']);
+
+export const SubscriptionAlertRecordScalarFieldEnumSchema = z.enum(['id','subscriptionId','subscriptionAlertId','contract','content','status','createdAt']);
+
 export const SortOrderSchema = z.enum(['asc','desc']);
 
 export const NullableJsonNullValueInputSchema = z.enum(['DbNull','JsonNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.DbNull : value);
@@ -381,3 +387,54 @@ export const SubscriptionSchema = z.object({
 })
 
 export type Subscription = z.infer<typeof SubscriptionSchema>
+
+/////////////////////////////////////////
+// EDIT HISTORY SCHEMA
+/////////////////////////////////////////
+
+export const EditHistorySchema = z.object({
+  id: z.string().cuid(),
+  tableName: z.string(),
+  tableField: z.string(),
+  tableId: z.string(),
+  fromValue: z.string(),
+  toValue: z.string(),
+  createdBy: z.string(),
+  createdAt: z.coerce.date(),
+})
+
+export type EditHistory = z.infer<typeof EditHistorySchema>
+
+/////////////////////////////////////////
+// SUBSCRIPTION ALERT SCHEMA
+/////////////////////////////////////////
+
+export const SubscriptionAlertSchema = z.object({
+  id: z.string().cuid(),
+  subscriptionId: z.string(),
+  intervalValue: z.number().int(),
+  intervalUnit: z.string(),
+  onField: z.string(),
+  contact: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  userId: z.string().nullable(),
+})
+
+export type SubscriptionAlert = z.infer<typeof SubscriptionAlertSchema>
+
+/////////////////////////////////////////
+// SUBSCRIPTION ALERT RECORD SCHEMA
+/////////////////////////////////////////
+
+export const SubscriptionAlertRecordSchema = z.object({
+  id: z.string().cuid(),
+  subscriptionId: z.string(),
+  subscriptionAlertId: z.string(),
+  contract: z.string(),
+  content: z.string(),
+  status: z.string(),
+  createdAt: z.coerce.date(),
+})
+
+export type SubscriptionAlertRecord = z.infer<typeof SubscriptionAlertRecordSchema>

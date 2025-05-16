@@ -5,6 +5,7 @@ import { validator } from "hono-openapi/zod";
 import { z } from "zod";
 import { verifyOrganizationMembership } from "../organizations/lib/membership";
 
+import { utcnow } from "@repo/utils";
 import { authMiddleware } from "../../middleware/auth";
 import { SubscriptionCreateInput, SubscriptionUpdateInput } from "./types";
 
@@ -127,8 +128,6 @@ export const subscriptionRouter = new Hono()
 						? { connect: { id: organizationId } }
 						: undefined,
 					user: { connect: { id: user.id } },
-					createdAt: new Date(),
-					updatedAt: new Date(),
 					category: categoryId
 						? { connect: { id: categoryId } }
 						: undefined,
@@ -138,7 +137,6 @@ export const subscriptionRouter = new Hono()
 							: undefined,
 				};
 
-				console.log("Creating subscription with data:", data);
 				const subscription = await db.subscription.create({ data });
 				return c.json(subscription, 201);
 			} catch (e) {
@@ -182,9 +180,10 @@ export const subscriptionRouter = new Hono()
 				where: { id },
 				data: {
 					...data,
-					updatedAt: new Date(),
+					updatedAt: utcnow(),
 				},
 			});
+
 			return c.json(subscription);
 		},
 	)
@@ -199,6 +198,7 @@ export const subscriptionRouter = new Hono()
 			try {
 				const id = c.req.param("id");
 				const rawData = c.req.valid("json");
+				const user = c.get("user");
 
 				const existing = await db.subscription.findUnique({
 					where: { id },
@@ -216,7 +216,7 @@ export const subscriptionRouter = new Hono()
 					},
 					data: {
 						...cleanRawData,
-						updatedAt: new Date(),
+						updatedAt: utcnow(),
 						categoryId:
 							rawData.categoryId === ""
 								? null
@@ -227,6 +227,53 @@ export const subscriptionRouter = new Hono()
 						},
 					},
 				});
+
+				const changes = [];
+				const fieldsToCompare = [
+					"company",
+					"description",
+					"frequency",
+					"value",
+					"currency",
+					"cycle",
+					"type",
+					"recurring",
+					"categoryId",
+					"contractExpiry",
+					"nextPaymentDate",
+					"urlLink",
+					"notesIncluded",
+				];
+
+				for (const field of fieldsToCompare) {
+					if (
+						String(existing[field]) !== String(subscription[field])
+					) {
+						changes.push({
+							field,
+							fromValue: String(existing[field]),
+							toValue: String(subscription[field]),
+						});
+					}
+				}
+
+				if (changes.length > 0) {
+					await Promise.all(
+						changes.map(async (change) => {
+							await db.editHistory.create({
+								data: {
+									createdBy: user.name,
+									tableName: "subscription",
+									tableField: change.field,
+									tableId: id,
+									fromValue: change.fromValue,
+									toValue: change.toValue,
+								},
+							});
+						}),
+					);
+				}
+
 				return c.json(subscription);
 			} catch (e) {
 				return c.json(

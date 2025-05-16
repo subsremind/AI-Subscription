@@ -1,8 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "@shared/hooks/router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "@saas/auth/hooks/use-session";
+import { tzdate, dateStrToTZDate, dateToUTC, dateFormat } from "@repo/utils"
 import { Button } from "@ui/components/button";
 import { Calendar } from "@ui/components/calendar";
 import { Checkbox } from "@ui/components/checkbox";
@@ -29,7 +30,6 @@ import {
 } from "@ui/components/select";
 import { Textarea } from "@ui/components/textarea";
 import { cn } from "@ui/lib";
-import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
@@ -129,18 +129,18 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function SubscriptionForm({
 	subscription,
-	onSuccess,
 	categoryId,
 	organizationId,
+	onSuccess,
 }: {
 	subscription?: any;
-	onSuccess: () => void;
 	categoryId?: string;
 	organizationId?: string;
+	onSuccess: (open: boolean, isReload: boolean) => void;
 }) {
 	const t = useTranslations();
-	const router = useRouter();
-	const queryClient = useQueryClient();
+
+	const { user } = useSession();
 
 	const { data: categories = [], isLoading: isLoadingCategories } = useQuery({
 		queryKey: ["subscription-categories-select", organizationId],
@@ -218,19 +218,8 @@ export function SubscriptionForm({
 				);
 			}
 
-			queryClient.invalidateQueries({
-				queryKey: ["subscription-categories"],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["total-subscriptions"],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["subscription"],
-			});
-
 			toast.success(t("common.status.success"));
-			router.refresh();
-			onSuccess();
+			onSuccess(false, true);
 		} catch (e) {
 			toast.error(t("common.status.error"));
 		}
@@ -300,10 +289,10 @@ export function SubscriptionForm({
 									onValueChange={field.onChange}
 									defaultValue={field.value}
 								>
-									<SelectTrigger>
+									<SelectTrigger className="w-full">
 										<SelectValue />
 									</SelectTrigger>
-									<SelectContent className="max-h-[300px] overflow-y-auto">
+									<SelectContent className="w-full max-h-[300px] overflow-y-auto">
 										{CURRENCIES.map((currency) => (
 											<SelectItem
 												key={currency}
@@ -331,7 +320,7 @@ export function SubscriptionForm({
 									onValueChange={field.onChange}
 									defaultValue={field.value}
 								>
-									<SelectTrigger>
+									<SelectTrigger className="w-full">
 										<SelectValue />
 									</SelectTrigger>
 									<SelectContent>
@@ -382,7 +371,7 @@ export function SubscriptionForm({
 									onValueChange={field.onChange}
 									defaultValue={field.value}
 								>
-									<SelectTrigger>
+									<SelectTrigger className="w-full">
 										<SelectValue />
 									</SelectTrigger>
 									<SelectContent>
@@ -412,7 +401,7 @@ export function SubscriptionForm({
 									}
 									value={field.value ? "true" : "false"}
 								>
-									<SelectTrigger>
+									<SelectTrigger className="w-full">
 										<SelectValue />
 									</SelectTrigger>
 									<SelectContent>
@@ -448,8 +437,8 @@ export function SubscriptionForm({
 											)}
 										>
 											{field.value ? (
-												format(
-													new Date(field.value),
+												dateFormat(
+													dateStrToTZDate(field.value, user.timezone),
 													"PPP",
 												)
 											) : (
@@ -467,13 +456,13 @@ export function SubscriptionForm({
 										mode="single"
 										selected={
 											field.value
-												? new Date(field.value)
+												? dateStrToTZDate(field.value, user.timezone)
 												: undefined
 										}
 										onSelect={(date) => {
 											if (date) {
 												field.onChange(
-													date.toISOString(),
+													dateToUTC(tzdate(date, user.timezone))
 												);
 											}
 										}}
@@ -507,15 +496,10 @@ export function SubscriptionForm({
 												!field.value &&
 													"text-muted-foreground",
 											)}
-											onClick={() =>
-												console.log(
-													"PopoverTrigger clicked",
-												)
-											}
 										>
 											{field.value ? (
-												format(
-													new Date(field.value),
+												dateFormat(
+													dateStrToTZDate(field.value, user.timezone),
 													"PPP",
 												)
 											) : (
@@ -533,13 +517,13 @@ export function SubscriptionForm({
 										mode="single"
 										selected={
 											field.value
-												? new Date(field.value)
+												? dateStrToTZDate(field.value, user.timezone)
 												: undefined
 										}
 										onSelect={(date) => {
 											if (date) {
 												field.onChange(
-													date.toISOString(),
+													dateToUTC(tzdate(date, user.timezone))
 												);
 											}
 										}}
@@ -573,7 +557,7 @@ export function SubscriptionForm({
 									value={field.value || ""}
 									defaultValue={field.value || ""}
 								>
-									<SelectTrigger>
+									<SelectTrigger className="w-full">
 										<SelectValue placeholder="Select payment method" />
 									</SelectTrigger>
 									<SelectContent>
@@ -621,7 +605,7 @@ export function SubscriptionForm({
 									onValueChange={field.onChange}
 									value={field.value}
 								>
-									<SelectTrigger>
+									<SelectTrigger className="w-full">
 										<SelectValue placeholder="Select a category" />
 									</SelectTrigger>
 									<SelectContent>

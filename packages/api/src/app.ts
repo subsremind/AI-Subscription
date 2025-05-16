@@ -16,10 +16,13 @@ import { healthRouter } from "./routes/health";
 import { newsletterRouter } from "./routes/newsletter";
 import { organizationsRouter } from "./routes/organizations/router";
 import { paymentsRouter } from "./routes/payments/router";
+import { subscriptionAlertRouter } from "./routes/subscription-alert/router";
 import { subscriptionCategoryRouter } from "./routes/subscription-category/router";
 import { subscriptionRouter } from "./routes/subscription/router";
 import { uploadsRouter } from "./routes/uploads";
 import { webhooksRouter } from "./routes/webhooks";
+import { scheduler } from "@repo/scheduler";
+import { sendSubscriptionAlerts } from "./lib/alert-send";
 
 export const app = new Hono().basePath("/api");
 
@@ -38,7 +41,8 @@ const appRouter = app
 	.route("/", adminRouter)
 	.route("/", healthRouter)
 	.route("/", subscriptionRouter)
-	.route("/", subscriptionCategoryRouter);
+	.route("/", subscriptionCategoryRouter)
+	.route("/", subscriptionAlertRouter);
 
 app.get(
 	"/app-openapi",
@@ -81,5 +85,13 @@ app.get(
 		},
 	}),
 );
+
+scheduler.schedule({
+	id: "alert-task",
+	cronExpression: "0 0 1/1 * * *",
+	task: async () => {
+		sendSubscriptionAlerts();
+	},
+});
 
 export type AppRouter = typeof appRouter;

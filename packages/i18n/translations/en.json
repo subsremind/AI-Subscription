@@ -223,6 +223,15 @@
 			"failure": "Failure",
 			"error": "Error",
 			"warning": "Warning"
+		},
+		"table": {
+			"empty": "No data available",
+			"loading": "Loading...",
+			"noResults": "No results found",
+			"page": "Page",
+			"rowsPerPage": "Rows per page",
+			"selectPage": "Select page",
+			"selectRowsPerPage": "Select rows per page"
 		}
 	},
 	"contact": {
@@ -805,7 +814,9 @@
 		"description": "Manage your subscription.",
 		"categories": {
 			"title": "Categories"
+		},
+		"alert": {
+			"title": "Alert Manager"
 		}
 	}
-
 }

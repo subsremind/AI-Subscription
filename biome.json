@@ -1,11 +1,11 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"formatter": {
-		"enabled": true,
-		"useEditorconfig": true
+		"enabled": false,
+		"useEditorconfig": false
 	},
 	"linter": {
-		"enabled": true,
+		"enabled": false,
 		"rules": {
 			"recommended": true,
 			"suspicious": {
@@ -31,7 +31,7 @@
 		}
 	},
 	"organizeImports": {
-		"enabled": true
+		"enabled": false
 	},
 	"files": {
 		"ignore": ["./packages/database/src/zod/index.ts"]

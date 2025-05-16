@@ -1,18 +1,19 @@
 {
+	"dependencies": {
+		"@repo/config": "workspace:*",
+		"@repo/logs": "workspace:*",
+		"cron": "^4.3.0"
+	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@repo/tsconfig": "workspace:*",
 		"@types/node": "^22.13.5"
 	},
 	"main": "./index.ts",
-	"name": "@repo/utils",
+	"name": "@repo/scheduler",
 	"scripts": {
 		"type-check": "tsc --noEmit"
 	},
 	"types": "./**/.tsx",
-	"version": "0.0.0",
-	"dependencies": {
-		"@date-fns/tz": "^1.2.0",
-		"date-fns": "^4.1.0"
-	}
+	"version": "0.0.0"
 }

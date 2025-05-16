@@ -8,6 +8,7 @@
 		"@repo/logs": "workspace:*",
 		"@repo/mail": "workspace:*",
 		"@repo/payments": "workspace:*",
+		"@repo/scheduler": "workspace:*",
 		"@repo/storage": "workspace:*",
 		"@repo/utils": "workspace:*",
 		"@scalar/hono-api-reference": "^0.5.175",
@@ -18,6 +19,7 @@
 		"openai": "^4.85.4",
 		"openapi-merge": "^1.3.3",
 		"use-intl": "^3.26.5",
+		"date-fns": "^4.1.0",
 		"zod": "^3.24.2"
 	},
 	"devDependencies": {

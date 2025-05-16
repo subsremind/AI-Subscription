@@ -45,6 +45,7 @@ model User {
   aiChats            AiChat[]
   categories         Category[]
   subscriptions      Subscription[]
+  subscriptionAlerts SubscriptionAlert[]
 
   @@unique([email])
   @@unique([username])
@@ -274,8 +275,54 @@ model Subscription {
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   userId         String?
   user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptionAlerts SubscriptionAlert[]
+  subscriptionAlertRecords SubscriptionAlertRecord[]
 
   @@map("subscription")
+}
+
+model EditHistory {
+  id         String   @id @default(cuid())
+  tableName  String
+  tableField String
+  tableId    String
+  fromValue  String
+  toValue    String
+  createdBy  String
+  createdAt  DateTime @default(now())
+
+  @@map("edit_history")
+}
+
+model SubscriptionAlert {
+  id             String       @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  intervalValue  Int
+  intervalUnit   String
+  onField        String
+  contact        String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  userId         String?
+  user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptionAlertRecords SubscriptionAlertRecord[]
+
+  @@map("subscription_alert")
+}
+
+model SubscriptionAlertRecord {
+  id                  String            @id @default(cuid())
+  subscriptionId      String
+  subscription        Subscription      @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  subscriptionAlertId String
+  subscriptionAlert   SubscriptionAlert @relation(fields: [subscriptionAlertId], references: [id], onDelete: Cascade)
+  contract            String
+  content             String
+  status              String
+  createdAt           DateTime          @default(now())
+
+  @@map("subscription_alert_record")
 }
 
 

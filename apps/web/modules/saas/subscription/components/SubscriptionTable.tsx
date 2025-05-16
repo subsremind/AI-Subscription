@@ -3,7 +3,7 @@
 import { formatCurrency } from "@saas/utils/currency";
 import { formatDateWithTimezone } from "@saas/utils/timezone";
 import { Spinner } from "@shared/components/Spinner";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
 	flexRender,
@@ -11,13 +11,6 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { Button } from "@ui/components/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@ui/components/dialog";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -32,12 +25,19 @@ import {
 	TableHeader,
 	TableRow,
 } from "@ui/components/table";
-import { EditIcon, MoreVerticalIcon, Trash2Icon } from "lucide-react";
-import { PlusIcon } from "lucide-react";
+import {
+	BellPlus,
+	EditIcon,
+	MoreVerticalIcon,
+	PlusIcon,
+	Trash2Icon,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { toast } from "sonner";
-import { SubscriptionForm } from "./SubscriptionForm";
+
+import { AlertSubscriptionDialog } from "./AlertSubscriptionDialog";
+import { DeleteSubscriptionDialog } from "./DeleteSubscriptionDialog";
+import { EditSubscriptionDialog } from "./EditSubscriptionDialog";
 
 export function SubscriptionTable({
 	categoryId,
@@ -45,10 +45,39 @@ export function SubscriptionTable({
 }: { categoryId?: string; organizationId?: string }) {
 	const t = useTranslations();
 	const queryClient = useQueryClient();
-	const [open, setOpen] = useState(false);
-	const [editingSubscription, setEditingSubscription] = useState<any>(null); // New edit state
+	const [alertOpen, setAlertOpen] = useState<boolean>(false);
+	const [editOpen, setEditOpen] = useState<boolean>(false);
+	const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+	const [subscription, setSubscription] = useState<any | null>(null);
 
-	// Get subscription list
+	const onEditSuccess = (open: boolean, isReload: boolean) => {
+		setEditOpen(open);
+		if (isReload) {
+			reload();
+		}
+	};
+
+	const onAlertOpenChange = (newOpen: boolean) => {
+		setAlertOpen(newOpen);
+	};
+
+	const onDeleteSuccess = (open: boolean, isReload: boolean) => {
+		setDeleteOpen(open);
+		if (isReload) {
+			reload();
+		}
+	};
+
+	const reload = () => {
+		queryClient.invalidateQueries({
+			queryKey: ["subscription-categories"],
+		});
+		queryClient.invalidateQueries({
+			queryKey: ["total-subscriptions"],
+		});
+		queryClient.invalidateQueries({ queryKey: ["subscription"] });
+	};
+
 	const { data, isLoading } = useQuery({
 		queryKey: ["subscription", categoryId, organizationId],
 		queryFn: async () => {
@@ -63,37 +92,6 @@ export function SubscriptionTable({
 			url += `?${params.toString()}`;
 			const response = await fetch(url);
 			return await response.json(); // Directly return the array from API
-		},
-	});
-
-	// Delete subscription
-	const [deleteSubscriptionId, setDeleteSubscriptionId] = useState<
-		string | null
-	>(null);
-
-	const deleteMutation = useMutation({
-		mutationFn: async (id: string) => {
-			const response = await fetch(`/api/subscription/${id}`, {
-				method: "DELETE",
-			});
-			if (!response.ok) {
-				throw new Error("Delete failed");
-			}
-			return response.json();
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["subscription-categories"],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["total-subscriptions"],
-			});
-			queryClient.invalidateQueries({ queryKey: ["subscription"] });
-			toast.success(t("common.status.success"));
-			setDeleteSubscriptionId(null);
-		},
-		onError: () => {
-			toast.error(t("common.status.error"));
 		},
 	});
 
@@ -152,8 +150,17 @@ export function SubscriptionTable({
 					<DropdownMenuContent>
 						<DropdownMenuItem
 							onClick={() => {
-								setEditingSubscription(row.original);
-								setOpen(true); // Add this line to open dialog
+								setAlertOpen(true);
+								setSubscription(row.original);
+							}}
+						>
+							<BellPlus className="mr-2 size-4" />
+							Alert
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => {
+								setEditOpen(true);
+								setSubscription(row.original);
 							}}
 						>
 							<EditIcon className="mr-2 size-4" />
@@ -161,9 +168,10 @@ export function SubscriptionTable({
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							className="text-destructive"
-							onClick={() =>
-								setDeleteSubscriptionId(row.original.id)
-							}
+							onClick={() => {
+								setDeleteOpen(true);
+								setSubscription(row.original);
+							}}
 						>
 							<Trash2Icon className="mr-2 size-4" />
 							Delete
@@ -184,84 +192,16 @@ export function SubscriptionTable({
 		<div className="p-6">
 			<div className="flex justify-between items-center mb-4">
 				<h2 className="text-xl font-bold">Subscription Management</h2>
-				<Dialog
-					open={open}
-					onOpenChange={(isOpen) => {
-						setOpen(isOpen);
-						if (!isOpen) setEditingSubscription(null); // Reset edit state when closing dialog
+				<Button
+					variant="ghost"
+					onClick={() => {
+						setEditOpen(true);
+						setSubscription(null);
 					}}
 				>
-					<DialogTrigger asChild>
-						<Button
-							variant="ghost"
-							onClick={() => setEditingSubscription(null)}
-						>
-							<PlusIcon className="size-4" />
-							{t("common.actions.new")}
-						</Button>
-					</DialogTrigger>
-					<DialogContent
-						className="w-[45rem] !max-w-[45vw]"
-						onInteractOutside={(e) => e.preventDefault()}
-						onEscapeKeyDown={(e) => e.preventDefault()}
-					>
-						<DialogHeader>
-							<DialogTitle>
-								{editingSubscription
-									? t("common.actions.edit")
-									: t("common.actions.new")}
-							</DialogTitle>
-						</DialogHeader>
-						<SubscriptionForm
-							subscription={editingSubscription}
-							categoryId={categoryId}
-							organizationId={organizationId}
-							onSuccess={() => {
-								setOpen(false);
-								setEditingSubscription(null);
-							}}
-						/>
-					</DialogContent>
-				</Dialog>
-
-				<Dialog
-					open={!!deleteSubscriptionId}
-					onOpenChange={(open) =>
-						!open && setDeleteSubscriptionId(null)
-					}
-				>
-					<DialogContent>
-						<DialogHeader>
-							<DialogTitle>Confirm Delete</DialogTitle>
-						</DialogHeader>
-						<div className="grid gap-4 py-4">
-							<p>
-								Are you sure you want to delete this
-								subscription?
-							</p>
-							<div className="flex gap-2 justify-end">
-								<Button
-									onClick={() =>
-										setDeleteSubscriptionId(null)
-									}
-								>
-									Cancel
-								</Button>
-								<Button
-									variant="primary"
-									onClick={() =>
-										deleteSubscriptionId &&
-										deleteMutation.mutate(
-											deleteSubscriptionId,
-										)
-									}
-								>
-									Confirm
-								</Button>
-							</div>
-						</div>
-					</DialogContent>
-				</Dialog>
+					<PlusIcon className="size-4" />
+					{t("common.actions.new")}
+				</Button>
 			</div>
 
 			{isLoading ? (
@@ -305,13 +245,30 @@ export function SubscriptionTable({
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No data available
+									{t("common.table.empty")}
 								</TableCell>
 							</TableRow>
 						)}
 					</TableBody>
 				</Table>
 			)}
+			<EditSubscriptionDialog
+				open={editOpen}
+				categoryId={categoryId}
+				organizationId={organizationId}
+				subscription={subscription}
+				onSuccess={onEditSuccess}
+			/>
+			<AlertSubscriptionDialog
+				open={alertOpen}
+				subscriptionId={subscription?.id}
+				onOpen={onAlertOpenChange}
+			/>
+			<DeleteSubscriptionDialog
+				open={deleteOpen}
+				subscriptionId={subscription?.id}
+				onSuccess={onDeleteSuccess}
+			/>
 		</div>
 	);
 }
