@@ -7,7 +7,7 @@ import { getTranslations } from "next-intl/server";
 export default async function Page({
   params,
 }: {
-  params: { organizationSlug: string };
+  params: Promise<{ organizationSlug: string }>;
 }) {
   const t = await getTranslations();
   const { organizationSlug } = params;
