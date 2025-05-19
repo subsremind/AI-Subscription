@@ -10,7 +10,7 @@ export default async function Page({
   params: Promise<{ organizationSlug: string }>;
 }) {
   const t = await getTranslations();
-  const { organizationSlug } = params;
+  const { organizationSlug } = await params;
   const organization = await getActiveOrganization(organizationSlug);
 
   if (!organization) {
