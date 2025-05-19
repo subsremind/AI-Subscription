@@ -18,7 +18,7 @@ export async function generateMetadata() {
 
 export default async function BillingSettingsPage() {
 	const session = await getSession();
-	const purchases = await getPurchases();
+	const purchases = await getPurchases() || [];
 	const queryClient = getQueryClient();
 
 	await queryClient.prefetchQuery({
