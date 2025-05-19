@@ -1,2 +1,3 @@
 // export * from "./plunk";
-export * from "./nodemailer";
+// export * from "./nodemailer";
+export * from "./resend";

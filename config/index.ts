@@ -80,7 +80,7 @@ export const config = {
 	// Mails
 	mails: {
 		// the from address for mails
-		from: "zhoujun3707@163.com",
+		from: "onboarding@resend.dev",
 	},
 	// Frontend
 	ui: {
@@ -112,7 +112,7 @@ export const config = {
 		// whether the contact form should be enabled
 		enabled: true,
 		// the email to which the contact form messages should be sent
-		to: "zhoujun3707@163.com",
+		to: "onboarding@resend.dev",
 		// the subject of the email
 		subject: "Contact form message",
 	},
