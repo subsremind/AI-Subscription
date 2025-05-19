@@ -22,7 +22,8 @@ export default async function AiDemoPage() {
 			throw new Error("Failed to fetch chats");
 		}
 
-		return response.json();
+		const data = await response.json();
+		return Array.isArray(data) ? data : [];
 	})();
 
 	await queryClient.prefetchQuery({
