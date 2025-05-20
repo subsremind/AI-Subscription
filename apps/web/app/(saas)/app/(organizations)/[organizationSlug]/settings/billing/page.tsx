@@ -37,7 +37,7 @@ export default async function BillingSettingsPage({
 		queryFn: () => purchases,
 	});
 
-	const { activePlan } = createPurchasesHelper(purchases);
+	const { activePlan } = createPurchasesHelper(Array.isArray(purchases) ? purchases : []);
 
 	return (
 		<SettingsList>
