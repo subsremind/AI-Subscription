@@ -14,7 +14,7 @@ export async function generateMetadata() {
 	const t = await getTranslations();
 
 	return {
-		title: t("choosePlan.title"),
+		title: t("pricing.choosePlan"),
 	};
 }
 
@@ -48,10 +48,10 @@ export default async function ChoosePlanPage() {
 		<AuthWrapper contentClass="max-w-5xl">
 			<div className="mb-4 text-center">
 				<h1 className="text-center font-bold text-2xl lg:text-3xl">
-					{t("choosePlan.title")}
+					{t("pricing.choosePlan")}
 				</h1>
 				<p className="text-muted-foreground text-sm lg:text-base">
-					{t("choosePlan.description")}
+					{t("pricing.description")}
 				</p>
 			</div>
 

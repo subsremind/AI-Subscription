@@ -44,6 +44,8 @@ import { CalendarIcon } from "lucide-react";
 
 const organizationFormSchema = z.object({
 	name: z.string().min(1),
+	dob: z.date().optional(),
+	mobile: z.boolean().optional(),
 });
 
 type OrganizationFormValues = z.infer<typeof organizationFormSchema>;

@@ -24,7 +24,7 @@ export default async function AiDemoPage({
 
 	const headerObject = Object.fromEntries((await headers()).entries());
 
-	const chats = await (async () => {
+	const chats: Array<{id: string}> = await (async () => {
 		const response = await apiClient.ai.chats.$get(
 			{
 				query: {

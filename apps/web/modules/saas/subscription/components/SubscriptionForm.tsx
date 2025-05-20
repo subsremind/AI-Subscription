@@ -123,6 +123,7 @@ const formSchema = z.object({
 	notes: z.string().optional(),
 	notesIncluded: z.boolean(),
 	tags: z.array(z.string()).optional(),
+	organizationId: z.string().nullable(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -438,7 +439,7 @@ export function SubscriptionForm({
 										>
 											{field.value ? (
 												dateFormat(
-													dateStrToTZDate(field.value, user.timezone),
+													dateStrToTZDate(field.value, user?.timezone || 'UTC'),
 													"PPP",
 												)
 											) : (
@@ -456,13 +457,13 @@ export function SubscriptionForm({
 										mode="single"
 										selected={
 											field.value
-												? dateStrToTZDate(field.value, user.timezone)
+											? dateStrToTZDate(field.value, user?.timezone || 'UTC')
 												: undefined
 										}
 										onSelect={(date) => {
 											if (date) {
 												field.onChange(
-													dateToUTC(tzdate(date, user.timezone))
+													dateToUTC(tzdate(date, user?.timezone || 'UTC'))
 												);
 											}
 										}}
@@ -499,7 +500,7 @@ export function SubscriptionForm({
 										>
 											{field.value ? (
 												dateFormat(
-													dateStrToTZDate(field.value, user.timezone),
+													dateStrToTZDate(field.value, user?.timezone || 'UTC'),
 													"PPP",
 												)
 											) : (
@@ -517,13 +518,13 @@ export function SubscriptionForm({
 										mode="single"
 										selected={
 											field.value
-												? dateStrToTZDate(field.value, user.timezone)
+												? dateStrToTZDate(field.value, user?.timezone || 'UTC')
 												: undefined
 										}
 										onSelect={(date) => {
 											if (date) {
 												field.onChange(
-													dateToUTC(tzdate(date, user.timezone))
+													dateToUTC(tzdate(date, user?.timezone || 'UTC'))
 												);
 											}
 										}}
@@ -561,7 +562,7 @@ export function SubscriptionForm({
 										<SelectValue placeholder="Select payment method" />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value={null}>
+										<SelectItem value="">
 											None
 										</SelectItem>
 										{PAYMENT_METHODS.map((method) => (
@@ -603,13 +604,13 @@ export function SubscriptionForm({
 							<FormControl>
 								<Select
 									onValueChange={field.onChange}
-									value={field.value}
+									value={field.value ?? undefined}
 								>
 									<SelectTrigger className="w-full">
 										<SelectValue placeholder="Select a category" />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value={null}>
+										<SelectItem value="">
 											None
 										</SelectItem>
 										{categories.map(

@@ -4,6 +4,7 @@ import { describeRoute } from "hono-openapi";
 import { validator } from "hono-openapi/zod";
 import { z } from "zod";
 import { authMiddleware } from "../../middleware/auth";
+import { SubscriptionAlertCreateInput } from "./types";
 
 export const subscriptionAlertRouter = new Hono()
 	.basePath("/subscription-alert")
@@ -30,18 +31,11 @@ export const subscriptionAlertRouter = new Hono()
 	)
 	.post(
 		"/",
+		validator("json", SubscriptionAlertCreateInput),
 		describeRoute({
 			summary: "Create new subscription alert",
 			tags: ["SubscriptionAlert"],
 		}),
-		validator(
-			"json",
-			z.object({
-				subscriptionId: z.string(),
-				message: z.string(),
-				date: z.string().datetime(),
-			}),
-		),
 		async (c) => {
 			const data = c.req.valid("json");
 			const alert = await db.subscriptionAlert.create({

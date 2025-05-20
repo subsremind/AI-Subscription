@@ -105,7 +105,7 @@ export function AlertSubscriptionDialog({
 	};
 
 	const saveMutation = useMutation({
-		mutationFn: async (params) => {
+		mutationFn: async (params: { subscriptionId?: string; alertList: any[] }) => {
 			const response = await fetch("/api/subscription-alert", {
 				method: "PATCH",
 				headers: {
@@ -222,7 +222,7 @@ export function AlertSubscriptionDialog({
 					</SelectTrigger>
 					<SelectContent>
 						<SelectGroup>
-							<SelectItem value={user?.id}>
+							<SelectItem value={user?.id || ''}>
 								{user?.name}
 							</SelectItem>
 						</SelectGroup>
