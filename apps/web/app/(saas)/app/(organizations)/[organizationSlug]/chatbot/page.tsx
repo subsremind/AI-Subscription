@@ -24,7 +24,7 @@ export default async function AiDemoPage({
 
 	const headerObject = Object.fromEntries((await headers()).entries());
 
-	const chats: Array<{id: string}> = await (async () => {
+	const chats = await (async () => {
 		const response = await apiClient.ai.chats.$get(
 			{
 				query: {
@@ -40,7 +40,8 @@ export default async function AiDemoPage({
 			throw new Error("Failed to fetch chats");
 		}
 
-		return response.json();
+		const data = await response.json();
+		return Array.isArray(data) ? data : [];
 	})();
 
 	await queryClient.prefetchQuery({
