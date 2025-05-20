@@ -143,7 +143,7 @@ export const subscriptionRouter = new Hono()
 				return c.json(
 					{
 						error: "Failed to create subscription",
-						details: e.message || e.toString(),
+						details: e?.toString(),
 					},
 					400,
 				);
@@ -176,13 +176,19 @@ export const subscriptionRouter = new Hono()
 				return c.json({ error: "Subscription not found" }, 404);
 			}
 
-			const subscription = await db.subscription.update({
-				where: { id },
-				data: {
-					...data,
-					updatedAt: utcnow(),
-				},
-			});
+			const { tags = [], ...cleanData } = data;
+				const subscriptionTags = tags.map((tagId) => ({ tagId }));
+				const subscription = await db.subscription.update({
+					where: { id },
+					data: {
+						...cleanData,
+						updatedAt: utcnow(),
+						subscriptionTags: {
+							deleteMany: {},
+							create: subscriptionTags,
+						},
+					}
+				});
 
 			return c.json(subscription);
 		},
@@ -246,13 +252,15 @@ export const subscriptionRouter = new Hono()
 				];
 
 				for (const field of fieldsToCompare) {
-					if (
-						String(existing[field]) !== String(subscription[field])
+					const existingFieldValue = (existing as Record<string, any>)[field];
+					const subscriptionFieldValue = (subscription as Record<string, any>)[field];
+
+					if (String(existingFieldValue) !== String(subscriptionFieldValue)
 					) {
 						changes.push({
 							field,
-							fromValue: String(existing[field]),
-							toValue: String(subscription[field]),
+							fromValue: String(existingFieldValue),
+							toValue: String(subscriptionFieldValue),
 						});
 					}
 				}
@@ -279,7 +287,7 @@ export const subscriptionRouter = new Hono()
 				return c.json(
 					{
 						error: "Failed to update subscription",
-						details: e.message || e.toString(),
+						details: e?.toString(),
 					},
 					400,
 				);

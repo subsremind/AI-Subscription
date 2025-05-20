@@ -11,13 +11,12 @@ export function SubscriptionPage({
 }) {
 	const [selectedCategoryId, setSelectedCategoryId] = useState<
 		string | undefined
-	>(null);
-
+	>(undefined);
 	return (
 		<div className="flex h-full w-full">
 			<div className="w-1/4 border-r p-4">
 				<SubscriptionSidebar
-					onCategorySelect={setSelectedCategoryId}
+					onCategorySelect={(id) => setSelectedCategoryId(id === null ? undefined : id)}
 					organizationId={organizationId}
 				/>
 			</div>

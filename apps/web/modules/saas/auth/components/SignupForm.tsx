@@ -83,9 +83,10 @@ export function SignupForm({ prefillEmail }: { prefillEmail?: string }) {
 		try {
 			const { error } = await authClient.signUp.email({
 				email,
-				password,
-				name,
-				callbackURL: redirectPath,
+							password,
+							name,
+							timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+							callbackURL: redirectPath,
 			});
 
 			if (error) {
