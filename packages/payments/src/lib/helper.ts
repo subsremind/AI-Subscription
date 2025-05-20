@@ -4,7 +4,7 @@ import type { Purchase } from "@repo/database";
 const plans = config.payments.plans as Config["payments"]["plans"];
 
 type PlanId = keyof typeof config.payments.plans;
-type PurchaseWithoutTimestamps = Omit<Purchase, "createdAt" | "updatedAt">;
+export type PurchaseWithoutTimestamps = Omit<Purchase, "createdAt" | "updatedAt">;
 
 function getActivePlanFromPurchases(purchases?: PurchaseWithoutTimestamps[]) {
 	const subscriptionPurchase = purchases?.find(

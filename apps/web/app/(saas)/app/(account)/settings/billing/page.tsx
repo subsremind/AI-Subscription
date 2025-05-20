@@ -1,4 +1,4 @@
-import { createPurchasesHelper } from "@repo/payments/lib/helper";
+import { createPurchasesHelper, PurchaseWithoutTimestamps } from "@repo/payments/lib/helper";
 import { getSession } from "@saas/auth/lib/server";
 import { ActivePlan } from "@saas/payments/components/ActivePlan";
 import { ChangePlan } from "@saas/payments/components/ChangePlan";
@@ -18,7 +18,7 @@ export async function generateMetadata() {
 
 export default async function BillingSettingsPage() {
 	const session = await getSession();
-	const purchases = await getPurchases() || [];
+	const purchases = (await getPurchases() || []) as PurchaseWithoutTimestamps[];
 	const queryClient = getQueryClient();
 
 	await queryClient.prefetchQuery({
