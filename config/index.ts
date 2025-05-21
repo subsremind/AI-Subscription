@@ -16,10 +16,10 @@ export const config = {
 				currency: "USD",
 				label: "Deutsch",
 			},
-			zh: {
-				currency: "ZHY",
-				label: "中文",
-			},
+			// zh: {
+			// 	currency: "ZHY",
+			// 	label: "中文",
+			// },
 		},
 		// The default locale is used if no locale is provided
 		defaultLocale: "en",
