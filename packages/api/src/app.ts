@@ -49,7 +49,7 @@ app.get(
 	openAPISpecs(app, {
 		documentation: {
 			info: {
-				title: "supastarter API",
+				title: "subsremind API",
 				version: "1.0.0",
 			},
 			servers: [

@@ -240,17 +240,17 @@
 			"subject": "Passwort zurücksetzen"
 		},
 		"magicLink": {
-			"body": "Hey,\ndu hast eine Anmelde-E-Mail von supastarter angefordert.\n\nKlicke auf den unten stehenden Link, um dich anzumelden.",
+			"body": "Hey,\ndu hast eine Anmelde-E-Mail von subsremind angefordert.\n\nKlicke auf den unten stehenden Link, um dich anzumelden.",
 			"login": "Login",
-			"subject": "Login bei supastarter"
+			"subject": "Login bei subsremind"
 		},
 		"newUser": {
-			"body": "Hallo,\n\nVielen Dank, dass du dich bei Supastarter angemeldet hast.\n\n\nUm mit der Nutzung unserer App zu beginnen, bestätige bitte deine E-Mail-Adresse, indem du auf den untenstehenden Link klickst.",
+			"body": "Hallo,\n\nVielen Dank, dass du dich bei Subsremind angemeldet hast.\n\n\nUm mit der Nutzung unserer App zu beginnen, bestätige bitte deine E-Mail-Adresse, indem du auf den untenstehenden Link klickst.",
 			"confirmEmail": "E-Mail bestätigen",
 			"subject": "E-Mail bestätigen"
 		},
 		"newsletterSignup": {
-			"body": "Vielen Dank, dass du dich für den supastarter-Newsletter angemeldet hast. \nWir halten dich mit den neuesten Nachrichten und Updates auf dem Laufenden.",
+			"body": "Vielen Dank, dass du dich für den subsremind-Newsletter angemeldet hast. \nWir halten dich mit den neuesten Nachrichten und Updates auf dem Laufenden.",
 			"subject": "Willkommen bei unserem Newsletter"
 		},
 		"organizationInvitation": {
@@ -272,7 +272,7 @@
 			}
 		},
 		"submit": "Abonnieren",
-		"subtitle": "Gehöre zu den Ersten, die Zugriff auf supastarter.nextjs erhalten.",
+		"subtitle": "Gehöre zu den Ersten, die Zugriff auf subsremind.nextjs erhalten.",
 		"title": "Erhalte frühen Zugang"
 	},
 	"onboarding": {
