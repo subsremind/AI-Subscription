@@ -19,7 +19,7 @@
 	"main": "./index.ts",
 	"name": "@repo/auth",
 	"scripts": {
-		"migrate": "dotenv -e ../../.env.local -- pnpm dlx @better-auth/cli@latest generate --config ./auth.ts --output ../database/prisma/schema.prisma",
+		"migrate": "dotenv -e ../../.env -- pnpm dlx @better-auth/cli@latest generate --config ./auth.ts --output ../database/prisma/schema.prisma",
 		"type-check": "tsc --noEmit"
 	},
 	"types": "./**/.tsx",
