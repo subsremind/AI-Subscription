@@ -16,10 +16,10 @@ export const config = {
 				currency: "USD",
 				label: "Deutsch",
 			},
-			zh: {
-				currency: "ZHY",
-				label: "中文",
-			},
+			// zh: {
+			// 	currency: "ZHY",
+			// 	label: "中文",
+			// },
 		},
 		// The default locale is used if no locale is provided
 		defaultLocale: "en",
@@ -63,11 +63,11 @@ export const config = {
 		// Whether users should be able to create accounts (otherwise users can only be by admins)
 		enableSignup: true,
 		// Whether users should be able to sign in with a magic link
-		enableMagicLink: true,
+		enableMagicLink: false,
 		// Whether users should be able to sign in with a social provider
 		enableSocialLogin: true,
 		// Whether users should be able to sign in with a passkey
-		enablePasskeys: true,
+		enablePasskeys: false,
 		// Whether users should be able to sign in with a password
 		enablePasswordLogin: true,
 		// where users should be redirected after the sign in
@@ -80,7 +80,7 @@ export const config = {
 	// Mails
 	mails: {
 		// the from address for mails
-		from: "onboarding@resend.dev",
+		from: "onboarding@maibozhineng.com",
 	},
 	// Frontend
 	ui: {
@@ -112,7 +112,7 @@ export const config = {
 		// whether the contact form should be enabled
 		enabled: true,
 		// the email to which the contact form messages should be sent
-		to: "onboarding@resend.dev",
+		to: "onboarding@maibozhineng.com",
 		// the subject of the email
 		subject: "Contact form message",
 	},
