@@ -29,18 +29,18 @@ export const SubscriptionCreateInput = z.object({
   frequency: z.number(),
   value: z.number(),
   currency: z.string(),
-  cycle: z.enum(["Daily", "Weekly", "Monthly", "Yearly"]),
+  cycle: z.string(),
   type: z.string(),
   recurring: z.boolean(),
   urlLink: z.string(),
   paymentMethod: z.string().nullable().default(null).optional(),
-  categoryId: z.string().nullable(),
+  categoryId: z.string().nullable().default(null).optional(),
   notes: z.string().optional(),
   notesIncluded: z.boolean().optional(),
   nextPaymentDate: z.string().datetime().optional(),
   contractExpiry: z.string().datetime().optional(),
   tags: z.array(z.string()).optional(),
-  organizationId: z.string().nullable(),
+  organizationId: z.string().nullable().optional(),
 });
 
 export const SubscriptionUpdateInput = SubscriptionCreateInput.partial().extend({

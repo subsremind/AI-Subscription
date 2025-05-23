@@ -145,7 +145,7 @@ export const subscriptionRouter = new Hono()
 						error: "Failed to create subscription",
 						details: e?.toString(),
 					},
-					400,
+					500,
 				);
 			}
 		},
