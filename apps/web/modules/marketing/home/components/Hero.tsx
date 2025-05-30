@@ -23,13 +23,12 @@ export function Hero() {
 					</div>
 				</div>
 
-				<h1 className="mx-auto max-w-3xl text-balance font-bold text-5xl lg:text-7xl">
-					Your revolutionary Next.js SaaS
+				<h1 className="mx-auto max-w-3xl text-balance font-bold text-5xl lg:text-5xl">
+					Manage Your Subscriptions With Ease
 				</h1>
 
 				<p className="mx-auto mt-4 max-w-lg text-balance text-foreground/60 text-lg">
-					This is a demo application built with supastarter. It will
-					save you a lot of time and effort building your next SaaS.
+					Keep track of all your streaming services, apps, and more in one place. Manage subscription services like Amazon Prime, Netflix, Spotify, YouTube Premium, and others effortlessly.
 				</p>
 
 				<div className="mt-6 flex flex-col items-center justify-center gap-3 md:flex-row">
@@ -46,7 +45,7 @@ export function Hero() {
 
 				<div className="mt-16 px-8 text-center">
 					<h5 className="font-semibold text-foreground/50 text-xs uppercase tracking-wider">
-						Built & shipped with these awesome tools
+						Some of the subscriptions we support
 					</h5>
 
 					<div className="mt-4 flex flex-col-reverse items-center justify-center gap-4 text-foreground/50 md:flex-row md:gap-8">
