@@ -456,14 +456,22 @@ export function SubscriptionForm({
 									</FormControl>
 								</PopoverTrigger>
 								<PopoverContent
-									className="w-auto p-0 "
+									className="w-auto p-4 bg-popover shadow-lg rounded-lg border border-border"
 									align="start"
 								>
+									<style>{`
+										.rdp-caption_dropdowns {
+											display: flex !important;
+											flex-direction: row !important;
+											gap: 0.5rem !important;
+											align-items: center !important;
+										}
+									`}</style>
 									<Calendar
 										mode="single"
 										selected={
 											field.value
-											? dateStrToTZDate(field.value, user?.timezone || 'UTC')
+												? dateStrToTZDate(field.value, user?.timezone || 'UTC')
 												: undefined
 										}
 										onSelect={(date) => {
@@ -478,7 +486,23 @@ export function SubscriptionForm({
 											date < new Date("1900-01-01")
 										}
 										initialFocus
-										className="[&_.text-secondary]:text-foreground"
+										className="
+											[&_.rdp-caption_label]:hidden
+											[&_.rdp-caption]:flex [&_.rdp-caption]:gap-2 [&_.rdp-caption]:items-center
+											[&_.rdp-caption_dropdowns]:flex [&_.rdp-caption_dropdowns]:gap-2 [&_.rdp-caption_dropdowns]:items-center
+											[&_.rdp-caption>*:first-child]:hidden
+											[&_.text-sm] [&_.font-medium]:hidden
+											[&_.rdp-nav]:hidden
+											[&_.rdp-vhidden]:hidden
+											[&_.rdp-dropdown]:bg-popover [&_.rdp-dropdown]:border [&_.rdp-dropdown]:border-border
+											[&_.rdp-dropdown]:rounded-md [&_.rdp-dropdown]:shadow-sm [&_.rdp-dropdown]:p-1
+											[&_.rdp-dropdown]:text-sm [&_.rdp-dropdown]:min-w-[120px] [&_.rdp-dropdown]:max-h-[200px]
+											[&_.rdp-dropdown]:overflow-y-auto [&_.rdp-dropdown]:scrollbar-thin
+											[&_.rdp-dropdown]:scrollbar-thumb-border [&_.rdp-dropdown]:scrollbar-track-transparent
+										"
+										fromYear={new Date().getFullYear()}
+										toYear={new Date().getFullYear() + 10}
+										captionLayout="dropdown"
 									/>
 								</PopoverContent>
 							</Popover>
@@ -517,9 +541,17 @@ export function SubscriptionForm({
 									</FormControl>
 								</PopoverTrigger>
 								<PopoverContent
-									className="w-auto p-0"
+									className="w-auto p-4 bg-popover shadow-lg rounded-lg border border-border"
 									align="start"
 								>
+									<style>{`
+										.rdp-caption_dropdowns {
+											display: flex !important;
+											flex-direction: row !important;
+											gap: 0.5rem !important;
+											align-items: center !important;
+										}
+									`}</style>
 									<Calendar
 										mode="single"
 										selected={
@@ -539,7 +571,23 @@ export function SubscriptionForm({
 											date < new Date("1900-01-01")
 										}
 										initialFocus
-										className="[&_.text-secondary]:text-foreground"
+										className="
+											[&_.rdp-caption_label]:hidden
+											[&_.rdp-caption]:flex [&_.rdp-caption]:gap-2 [&_.rdp-caption]:items-center
+											[&_.rdp-caption_dropdowns]:flex [&_.rdp-caption_dropdowns]:gap-2 [&_.rdp-caption_dropdowns]:items-center
+											[&_.rdp-caption>*:first-child]:hidden
+											[&_.text-sm] [&_.font-medium]:hidden
+											[&_.rdp-nav]:hidden
+											[&_.rdp-vhidden]:hidden
+											[&_.rdp-dropdown]:bg-popover [&_.rdp-dropdown]:border [&_.rdp-dropdown]:border-border
+											[&_.rdp-dropdown]:rounded-md [&_.rdp-dropdown]:shadow-sm [&_.rdp-dropdown]:p-1
+											[&_.rdp-dropdown]:text-sm [&_.rdp-dropdown]:min-w-[120px] [&_.rdp-dropdown]:max-h-[200px]
+											[&_.rdp-dropdown]:overflow-y-auto [&_.rdp-dropdown]:scrollbar-thin
+											[&_.rdp-dropdown]:scrollbar-thumb-border [&_.rdp-dropdown]:scrollbar-track-transparent
+										"
+										fromYear={new Date().getFullYear()}
+										toYear={new Date().getFullYear() + 10}
+										captionLayout="dropdown"
 									/>
 								</PopoverContent>
 							</Popover>
