@@ -100,7 +100,7 @@ export function SubscriptionSidebar({
 	if (isLoading) {
 		return (
 			<div className="flex items-center justify-center p-4">
-				<span>Loading categories...</span>
+				<span>{t("subscription.categories.loading")}</span>
 			</div>
 		);
 	}
@@ -108,13 +108,13 @@ export function SubscriptionSidebar({
 	if (error) {
 		return (
 			<div className="p-4 text-red-500">
-				<p>Error: {error.message}</p>
+				<p>{t("subscription.categories.error", { message: error.message })}</p>
 				<button
 					onClick={() => window.location.reload()}
 					type="button"
 					className="mt-2 text-sm underline"
 				>
-					Try again
+					{t("subscription.categories.tryAgain")}
 				</button>
 			</div>
 		);
@@ -122,7 +122,7 @@ export function SubscriptionSidebar({
 
 	const handleAddCategory = async () => {
 		if (!newCategoryName.trim()) {
-			toast.error("Category name cannot be empty");
+			toast.error(t("subscription.categories.empty"));
 			return;
 		}
 
@@ -132,7 +132,7 @@ export function SubscriptionSidebar({
 		);
 
 		if (isDuplicate) {
-			toast.error("Category already exists");
+			toast.error(t("subscription.categories.duplicate"));
 			return;
 		}
 
@@ -151,16 +151,16 @@ export function SubscriptionSidebar({
 			}
 
 			setNewCategoryName("");
-			toast.success("Category added successfully");
+			toast.success(t("subscription.categories.addSuccess"));
 			queryClient.invalidateQueries({
 				queryKey: ["subscription-categories"],
 			});
 			setIsDialogOpen(false);
 		} catch (error) {
 			if (error instanceof Error) {
-				toast.error(error.message || "Failed to add category");
+				toast.error(error.message || t("subscription.categories.addFailed"));
 			} else {
-				toast.error("Failed to add category");
+				toast.error(t("subscription.categories.addFailed"));
 			}
 		} finally {
 			setIsAddingCategory(false);
@@ -192,16 +192,16 @@ export function SubscriptionSidebar({
 				throw new Error(await response.text());
 			}
 
-			toast.success("Category updated successfully");
+			toast.success(t("subscription.categories.updateSuccess"));
 			queryClient.invalidateQueries({
 				queryKey: ["subscription-categories"],
 			});
 			setEditingCategory(null);
 		} catch (error) {
 			if (error instanceof Error) {
-				toast.error(error.message || "Failed to update category");
+				toast.error(error.message || t("subscription.categories.updateFailed"));
 			} else {
-				toast.error("Failed to update category");
+				toast.error(t("subscription.categories.updateFailed"));
 			}
 		}
 	};
@@ -221,16 +221,16 @@ export function SubscriptionSidebar({
 				throw new Error(await response.text());
 			}
 
-			toast.success("Category deleted successfully");
+			toast.success(t("subscription.categories.deleteSuccess"));
 			queryClient.invalidateQueries({
 				queryKey: ["subscription-categories"],
 			});
 			setDeleteCategoryId(null);
 		} catch (error) {
 			if (error instanceof Error) {
-				toast.error(error.message || "Failed to delete category");
+				toast.error(error.message || t("subscription.categories.deleteFailed"));
 			} else {
-				toast.error("Failed to delete category");
+				toast.error(t("subscription.categories.deleteFailed"));
 			}
 		}
 	};
@@ -243,7 +243,7 @@ export function SubscriptionSidebar({
 			>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Edit Category</DialogTitle>
+						<DialogTitle>{t("subscription.categories.edit")}</DialogTitle>
 					</DialogHeader>
 					<div className="grid gap-4 py-4">
 						<Input
@@ -258,13 +258,13 @@ export function SubscriptionSidebar({
 						/>
 						<div className="flex gap-2 justify-end">
 							<Button onClick={() => setEditingCategory(null)}>
-								Cancel
+								{t("common.actions.cancel")}
 							</Button>
 							<Button
 								variant="primary"
 								onClick={handleEditCategory}
 							>
-								Confirm
+								{t("subscription.categories.confirm")}
 							</Button>
 						</div>
 					</div>
@@ -277,19 +277,19 @@ export function SubscriptionSidebar({
 			>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Confirm Delete</DialogTitle>
+						<DialogTitle>{t("subscription.categories.confirmDelete")}</DialogTitle>
 					</DialogHeader>
 					<div className="grid gap-4 py-4">
-						<p>Are you sure you want to delete this category?</p>
+						<p>{t("subscription.categories.deleteConfirmMessage")}</p>
 						<div className="flex gap-2 justify-end">
 							<Button onClick={() => setDeleteCategoryId(null)}>
-								Cancel
+								{t("common.actions.cancel")}
 							</Button>
 							<Button
 								variant="primary"
 								onClick={handleDeleteCategory}
 							>
-								Confirm Delete
+								{t("subscription.categories.confirmDelete")}
 							</Button>
 						</div>
 					</div>
@@ -308,18 +308,18 @@ export function SubscriptionSidebar({
 							className="flex items-center gap-1"
 						>
 							<PlusIcon className="size-4" />
-							<span>New</span>
+							<span>{t("common.actions.new")}</span>
 						</Button>
 					</DialogTrigger>
 					<DialogContent
 						onInteractOutside={(e) => e.preventDefault()}
 					>
 						<DialogHeader>
-							<DialogTitle>Add New Category</DialogTitle>
+							<DialogTitle>{t("subscription.categories.addNew")}</DialogTitle>
 						</DialogHeader>
 						<div className="grid gap-4 py-4">
 							<Input
-								placeholder="Category name"
+								placeholder={t("subscription.categories.categoryName")}
 								value={newCategoryName}
 								onChange={(e) =>
 									setNewCategoryName(e.target.value)
@@ -332,7 +332,7 @@ export function SubscriptionSidebar({
 								onClick={handleAddCategory}
 								disabled={isAddingCategory}
 							>
-								{isAddingCategory ? "Adding..." : "Confirm"}
+								{isAddingCategory ? t("subscription.categories.adding") : t("subscription.categories.confirm")}
 							</Button>
 						</DialogFooter>
 					</DialogContent>
@@ -376,7 +376,7 @@ export function SubscriptionSidebar({
 										}
 									>
 										<EditIcon className="mr-2 h-4 w-4" />
-										Edit
+									{t("common.actions.edit")}
 									</DropdownMenuItem>
 									<DropdownMenuItem
 										className="text-destructive"
@@ -385,7 +385,7 @@ export function SubscriptionSidebar({
 										}
 									>
 										<Trash2Icon className="mr-2 h-4 w-4" />
-										Delete
+									{t("common.actions.delete")}
 									</DropdownMenuItem>
 								</DropdownMenuContent>
 							</DropdownMenu>

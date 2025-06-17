@@ -240,7 +240,7 @@ export function SubscriptionForm({
 					name="company"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Company</FormLabel>
+							<FormLabel>{t("subscription.company")}</FormLabel>
 							<FormControl>
 								<Input {...field} />
 							</FormControl>
@@ -254,7 +254,7 @@ export function SubscriptionForm({
 					name="description"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Description</FormLabel>
+							<FormLabel>{t("subscription.description")}</FormLabel>
 							<FormControl>
 								<Input {...field} />
 							</FormControl>
@@ -268,7 +268,7 @@ export function SubscriptionForm({
 					name="value"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Amount</FormLabel>
+							<FormLabel>{t("subscription.amount")}</FormLabel>
 							<FormControl>
 								<Input
 									type="number"
@@ -290,7 +290,7 @@ export function SubscriptionForm({
 					name="currency"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Currency</FormLabel>
+							<FormLabel>{t("subscription.currency")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={field.onChange}
@@ -321,7 +321,7 @@ export function SubscriptionForm({
 					name="cycle"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Billing Cycle</FormLabel>
+							<FormLabel>{t("subscription.cycle")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={field.onChange}
@@ -352,7 +352,7 @@ export function SubscriptionForm({
 					name="frequency"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Frequency</FormLabel>
+							<FormLabel>{t("subscription.frequency")}</FormLabel>
 							<FormControl>
 								<Input
 									type="number"
@@ -372,7 +372,7 @@ export function SubscriptionForm({
 					name="type"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Type</FormLabel>
+							<FormLabel>{t("subscription.type")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={field.onChange}
@@ -400,7 +400,7 @@ export function SubscriptionForm({
 					name="recurring"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Recurring</FormLabel>
+							<FormLabel>{t("subscription.recurring")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={(value) =>
@@ -431,7 +431,7 @@ export function SubscriptionForm({
 					name="nextPaymentDate"
 					render={({ field }) => (
 						<FormItem className="flex flex-col">
-							<FormLabel>Next Payment Date</FormLabel>
+							<FormLabel>{t("subscription.nextPaymentDate")}</FormLabel>
 							<Popover modal={true}>
 								<PopoverTrigger asChild>
 									<FormControl>
@@ -449,7 +449,7 @@ export function SubscriptionForm({
 													"PPP",
 												)
 											) : (
-												<span>Pick a date</span>
+												<span>{t("subscription.pickADate")}</span>
 											)}
 											<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
 										</Button>
@@ -516,7 +516,7 @@ export function SubscriptionForm({
 					name="contractExpiry"
 					render={({ field }) => (
 						<FormItem className="flex flex-col">
-							<FormLabel>Contract Expiry</FormLabel>
+							<FormLabel>{t("subscription.contractExpiry")}</FormLabel>
 							<Popover modal={true}>
 								<PopoverTrigger asChild>
 									<FormControl>
@@ -534,7 +534,7 @@ export function SubscriptionForm({
 													"PPP",
 												)
 											) : (
-												<span>Pick a date</span>
+												<span>{t("subscription.pickADate")}</span>
 											)}
 											<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
 										</Button>
@@ -601,7 +601,7 @@ export function SubscriptionForm({
 					name="paymentMethod"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Payment Method</FormLabel>
+							<FormLabel>{t("subscription.paymentMethod")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={(value) =>
@@ -613,7 +613,7 @@ export function SubscriptionForm({
 									defaultValue={field.value || ""}
 								>
 									<SelectTrigger className="w-full">
-										<SelectValue placeholder="Select payment method" />
+										<SelectValue placeholder={t("subscription.placeholder.selectPaymentMethod")} />
 									</SelectTrigger>
 									<SelectContent>
 										<SelectItem value="none">
@@ -640,7 +640,7 @@ export function SubscriptionForm({
 					name="urlLink"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>URL</FormLabel>
+							<FormLabel>{t("subscription.urlLink")}</FormLabel>
 							<FormControl>
 								<Input {...field} />
 							</FormControl>
@@ -654,14 +654,14 @@ export function SubscriptionForm({
 					name="categoryId"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Category</FormLabel>
+							<FormLabel>{t("subscription.category")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={field.onChange}
 									value={field.value ?? undefined}
 								>
 									<SelectTrigger className="w-full">
-										<SelectValue placeholder="Select a category" />
+										<SelectValue placeholder={t("subscription.placeholder.selectCategory")} />
 									</SelectTrigger>
 									<SelectContent>
 										<SelectItem value="none">
@@ -694,7 +694,7 @@ export function SubscriptionForm({
 					render={({ field }) => (
 						<FormItem className="col-span-2">
 							<div className="flex items-center justify-between mb-2">
-								<FormLabel>Notes</FormLabel>
+								<FormLabel>{t("subscription.notes")}</FormLabel>
 								<FormField
 									control={form.control}
 									name="notesIncluded"

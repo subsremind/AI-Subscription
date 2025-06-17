@@ -37,11 +37,11 @@ export function DeleteSubscriptionDialog({
 			return response.json();
 		},
 		onSuccess: () => {
-			toast.success(t("common.status.success"));
+			toast.success(t("subscription.form.deleteSuccess"));
 			onSuccess(false, true);
 		},
 		onError: () => {
-			toast.error(t("common.status.error"));
+			toast.error(t("subscription.form.deleteFailed"));
 		},
 	});
 
@@ -55,19 +55,19 @@ export function DeleteSubscriptionDialog({
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>
-						Are you absolutely sure?
+						{t("subscription.form.delete")}
 					</AlertDialogTitle>
 					<AlertDialogDescription>
-						This action cannot be undone. This will permanently
-						delete your data from our servers.
+						{t("subscription.form.deleteConfirm")}
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogCancel>Cancel</AlertDialogCancel>
+					<AlertDialogCancel className="text-base font-medium text-gray-800 bg-gray-100 hover:bg-gray-200 border border-gray-200">{t("common.actions.cancel")}</AlertDialogCancel>
 					<AlertDialogAction
+						className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
 						onClick={() => deleteMutation.mutate(subscriptionId)}
 					>
-						Delete
+						{t("common.actions.delete")}
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>

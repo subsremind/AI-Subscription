@@ -9,7 +9,7 @@ export default async function Page() {
     <>
       <PageHeader
         title={t("subscription.title")}
-        subtitle={t("subscription.description")}
+        subtitle={t("subscription.descriptionLabel")}
       />
       <div className="container mx-auto py-6">
         <SubscriptionPage />
