@@ -2,7 +2,7 @@
 	"dependencies": {
 		"@repo/config": "workspace:*",
 		"@repo/logs": "workspace:*",
-		"cron": "^4.3.0"
+		"cron": "^4.3.1"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
