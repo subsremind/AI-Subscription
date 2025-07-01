@@ -98,11 +98,11 @@ export function SubscriptionTable({
 	const columns: ColumnDef<any>[] = [
 		{
 			accessorKey: "company",
-			header: "Company",
+			header: t("subscription.table.columns.company"),
 		},
 		{
 			accessorKey: "value",
-			header: "Amount",
+			header: t("subscription.table.columns.amount"),
 			cell: ({ row }) => (
 				<span>
 					{row.original.value
@@ -116,7 +116,7 @@ export function SubscriptionTable({
 		},
 		{
 			accessorKey: "cycle",
-			header: "Billing Cycle",
+			header: t("subscription.table.columns.billingCycle"),
 			cell: ({ row }) => (
 				<span>
 					{row.original.frequency} {row.original.cycle}
@@ -125,7 +125,7 @@ export function SubscriptionTable({
 		},
 		{
 			accessorKey: "nextPaymentDate",
-			header: "Next Payment Date",
+			header: t("subscription.table.columns.nextPaymentDate"),
 			cell: ({ row }) => (
 				<span>
 					{row.original.nextPaymentDate
@@ -136,7 +136,7 @@ export function SubscriptionTable({
 		},
 		{
 			accessorKey: "paymentMethod",
-			header: "Payment Method",
+			header: t("subscription.table.columns.paymentMethod"),
 		},
 		{
 			id: "actions",
@@ -155,7 +155,7 @@ export function SubscriptionTable({
 							}}
 						>
 							<BellPlus className="mr-2 size-4" />
-							Alert
+							{t("subscription.table.actions.alert")}
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							onClick={() => {
@@ -164,7 +164,7 @@ export function SubscriptionTable({
 							}}
 						>
 							<EditIcon className="mr-2 size-4" />
-							Edit
+							{t("subscription.table.actions.edit")}
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							className="text-destructive"
@@ -174,7 +174,7 @@ export function SubscriptionTable({
 							}}
 						>
 							<Trash2Icon className="mr-2 size-4" />
-							Delete
+							{t("subscription.table.actions.delete")}
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
@@ -191,7 +191,7 @@ export function SubscriptionTable({
 	return (
 		<div className="p-6">
 			<div className="flex justify-between items-center mb-4">
-				<h2 className="text-xl font-bold">Subscription Management</h2>
+				<h2 className="text-xl font-bold">{t("subscription.table.title")}</h2>
 				<Button
 					variant="ghost"
 					onClick={() => {

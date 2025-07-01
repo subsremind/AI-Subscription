@@ -266,7 +266,7 @@ export function AlertSubscriptionDialog({
 				onEscapeKeyDown={(e) => e.preventDefault()}
 			>
 				<DialogHeader>
-					<DialogTitle>{t("subscription.alert.title")}</DialogTitle>
+					<DialogTitle>{t("subscription.alert.setAlert")}</DialogTitle>
 				</DialogHeader>
 				<div className="flex flex-col max-h-[60vh]">
 					<Table className="w-full">
@@ -327,8 +327,8 @@ export function AlertSubscriptionDialog({
 					</Button>
 					<Button onClick={() => onOpen(false)}>Cancel</Button>
 					<Button variant="primary" onClick={handleSave}>
-						Save changes
-					</Button>
+					{t("subscription.alert.save")}
+				</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
