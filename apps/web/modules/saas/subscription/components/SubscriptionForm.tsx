@@ -118,12 +118,12 @@ const formSchema = z.object({
 	nextPaymentDate: z.string().datetime().optional(),
 	contractExpiry: z.string().datetime().optional(),
 	urlLink: z.string().optional(),
-	paymentMethod: z.string().nullable().default(null),
-	categoryId: z.string().nullable().default(null),
+	paymentMethod: z.string().nullable().default(null).optional(),
+	categoryId: z.string().nullable().default(null).optional(),
 	notes: z.string().optional(),
 	notesIncluded: z.boolean(),
 	tags: z.array(z.string()).optional(),
-	organizationId: z.string().nullable(),
+	organizationId: z.string().nullable().default(null).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -195,6 +195,12 @@ export function SubscriptionForm({
 
 	const onSubmit = form.handleSubmit(async (data) => {
 		try {
+			if (data.categoryId === "none" || data.categoryId === "") {
+				data.categoryId = null;
+			}
+			if (data.paymentMethod === "none" || data.paymentMethod === "") {
+				data.paymentMethod = null;
+			}
 			const url = subscription
 				? `/api/subscription/${subscription.id}`
 				: "/api/subscription";
@@ -562,7 +568,7 @@ export function SubscriptionForm({
 										<SelectValue placeholder="Select payment method" />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value="">
+										<SelectItem value="none">
 											None
 										</SelectItem>
 										{PAYMENT_METHODS.map((method) => (
@@ -610,7 +616,7 @@ export function SubscriptionForm({
 										<SelectValue placeholder="Select a category" />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value="">
+										<SelectItem value="none">
 											None
 										</SelectItem>
 										{categories.map(
@@ -670,6 +676,20 @@ export function SubscriptionForm({
 						</FormItem>
 					)}
 				/>
+
+				{Object.entries(form.formState.errors).length > 0 && (
+  <div className="bg-red-100 p-4 rounded-md mb-4">
+    <p className="text-red-800">Please fix the errors below:</p>
+    {Object.entries(form.formState.errors).map(([name, error]) => (
+      <div key={name} className="mt-2">
+        <p className="text-sm text-red-600">
+          {name}: {error.message}
+        </p>
+      </div>
+    ))}
+  </div>
+)}
+
 
 				<div className="col-span-2 w-full flex justify-end">
 					<Button
