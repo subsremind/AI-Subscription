@@ -1,9 +1,9 @@
 {
 	"dependencies": {
-		"@prisma/client": "^6.3.1",
+		"@prisma/client": "^6.13.0",
 		"@repo/config": "workspace:*",
-		"decimal.js": "^10.5.0",
-		"zod": "^3.24.2"
+		"decimal.js": "^10.6.0",
+		"zod": "^4.0.14"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.0.0",
