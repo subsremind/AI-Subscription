@@ -240,7 +240,7 @@ export function SubscriptionForm({
 					name="company"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Company</FormLabel>
+							<FormLabel>{t("subscription.company")}</FormLabel>
 							<FormControl>
 								<Input {...field} />
 							</FormControl>
@@ -254,7 +254,7 @@ export function SubscriptionForm({
 					name="description"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Description</FormLabel>
+							<FormLabel>{t("subscription.description")}</FormLabel>
 							<FormControl>
 								<Input {...field} />
 							</FormControl>
@@ -268,7 +268,7 @@ export function SubscriptionForm({
 					name="value"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Amount</FormLabel>
+							<FormLabel>{t("subscription.amount")}</FormLabel>
 							<FormControl>
 								<Input
 									type="number"
@@ -290,7 +290,7 @@ export function SubscriptionForm({
 					name="currency"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Currency</FormLabel>
+							<FormLabel>{t("subscription.currency")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={field.onChange}
@@ -321,7 +321,7 @@ export function SubscriptionForm({
 					name="cycle"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Billing Cycle</FormLabel>
+							<FormLabel>{t("subscription.cycle")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={field.onChange}
@@ -352,7 +352,7 @@ export function SubscriptionForm({
 					name="frequency"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Frequency</FormLabel>
+							<FormLabel>{t("subscription.frequency")}</FormLabel>
 							<FormControl>
 								<Input
 									type="number"
@@ -372,7 +372,7 @@ export function SubscriptionForm({
 					name="type"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Type</FormLabel>
+							<FormLabel>{t("subscription.type")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={field.onChange}
@@ -400,7 +400,7 @@ export function SubscriptionForm({
 					name="recurring"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Recurring</FormLabel>
+							<FormLabel>{t("subscription.recurring")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={(value) =>
@@ -431,7 +431,7 @@ export function SubscriptionForm({
 					name="nextPaymentDate"
 					render={({ field }) => (
 						<FormItem className="flex flex-col">
-							<FormLabel>Next Payment Date</FormLabel>
+							<FormLabel>{t("subscription.nextPaymentDate")}</FormLabel>
 							<Popover modal={true}>
 								<PopoverTrigger asChild>
 									<FormControl>
@@ -449,77 +449,24 @@ export function SubscriptionForm({
 													"PPP",
 												)
 											) : (
-												<span>Pick a date</span>
+												<span>{t("subscription.pickADate")}</span>
 											)}
 											<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
 										</Button>
 									</FormControl>
 								</PopoverTrigger>
 								<PopoverContent
-									className="w-auto p-0 "
+									className="w-auto p-4 bg-popover shadow-lg rounded-lg border border-border"
 									align="start"
 								>
-									<Calendar
-										mode="single"
-										selected={
-											field.value
-											? dateStrToTZDate(field.value, user?.timezone || 'UTC')
-												: undefined
+									<style>{`
+										.rdp-caption_dropdowns {
+											display: flex !important;
+											flex-direction: row !important;
+											gap: 0.5rem !important;
+											align-items: center !important;
 										}
-										onSelect={(date) => {
-											if (date) {
-												field.onChange(
-													dateToUTC(tzdate(date, user?.timezone || 'UTC'))
-												);
-											}
-										}}
-										disabled={(date) =>
-											date < new Date() ||
-											date < new Date("1900-01-01")
-										}
-										initialFocus
-										className="[&_.text-secondary]:text-foreground"
-									/>
-								</PopoverContent>
-							</Popover>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				<FormField
-					control={form.control}
-					name="contractExpiry"
-					render={({ field }) => (
-						<FormItem className="flex flex-col">
-							<FormLabel>Contract Expiry</FormLabel>
-							<Popover modal={true}>
-								<PopoverTrigger asChild>
-									<FormControl>
-										<Button
-											variant={"outline"}
-											className={cn(
-												"w-full pl-3 text-left font-normal bg-transparent !text-foreground border border-input cursor-pointer", // Added cursor-pointer
-												!field.value &&
-													"text-muted-foreground",
-											)}
-										>
-											{field.value ? (
-												dateFormat(
-													dateStrToTZDate(field.value, user?.timezone || 'UTC'),
-													"PPP",
-												)
-											) : (
-												<span>Pick a date</span>
-											)}
-											<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-										</Button>
-									</FormControl>
-								</PopoverTrigger>
-								<PopoverContent
-									className="w-auto p-0"
-									align="start"
-								>
+									`}</style>
 									<Calendar
 										mode="single"
 										selected={
@@ -539,7 +486,108 @@ export function SubscriptionForm({
 											date < new Date("1900-01-01")
 										}
 										initialFocus
-										className="[&_.text-secondary]:text-foreground"
+										className="
+											[&_.rdp-caption_label]:hidden
+											[&_.rdp-caption]:flex [&_.rdp-caption]:gap-2 [&_.rdp-caption]:items-center
+											[&_.rdp-caption_dropdowns]:flex [&_.rdp-caption_dropdowns]:gap-2 [&_.rdp-caption_dropdowns]:items-center
+											[&_.rdp-caption>*:first-child]:hidden
+											[&_.text-sm] [&_.font-medium]:hidden
+											[&_.rdp-nav]:hidden
+											[&_.rdp-vhidden]:hidden
+											[&_.rdp-dropdown]:bg-popover [&_.rdp-dropdown]:border [&_.rdp-dropdown]:border-border
+											[&_.rdp-dropdown]:rounded-md [&_.rdp-dropdown]:shadow-sm [&_.rdp-dropdown]:p-1
+											[&_.rdp-dropdown]:text-sm [&_.rdp-dropdown]:min-w-[120px] [&_.rdp-dropdown]:max-h-[200px]
+											[&_.rdp-dropdown]:overflow-y-auto [&_.rdp-dropdown]:scrollbar-thin
+											[&_.rdp-dropdown]:scrollbar-thumb-border [&_.rdp-dropdown]:scrollbar-track-transparent
+										"
+										fromYear={new Date().getFullYear()}
+										toYear={new Date().getFullYear() + 10}
+										captionLayout="dropdown"
+									/>
+								</PopoverContent>
+							</Popover>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="contractExpiry"
+					render={({ field }) => (
+						<FormItem className="flex flex-col">
+							<FormLabel>{t("subscription.contractExpiry")}</FormLabel>
+							<Popover modal={true}>
+								<PopoverTrigger asChild>
+									<FormControl>
+										<Button
+											variant={"outline"}
+											className={cn(
+												"w-full pl-3 text-left font-normal bg-transparent !text-foreground border border-input cursor-pointer", // Added cursor-pointer
+												!field.value &&
+													"text-muted-foreground",
+											)}
+										>
+											{field.value ? (
+												dateFormat(
+													dateStrToTZDate(field.value, user?.timezone || 'UTC'),
+													"PPP",
+												)
+											) : (
+												<span>{t("subscription.pickADate")}</span>
+											)}
+											<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+										</Button>
+									</FormControl>
+								</PopoverTrigger>
+								<PopoverContent
+									className="w-auto p-4 bg-popover shadow-lg rounded-lg border border-border"
+									align="start"
+								>
+									<style>{`
+										.rdp-caption_dropdowns {
+											display: flex !important;
+											flex-direction: row !important;
+											gap: 0.5rem !important;
+											align-items: center !important;
+										}
+									`}</style>
+									<Calendar
+										mode="single"
+										selected={
+											field.value
+												? dateStrToTZDate(field.value, user?.timezone || 'UTC')
+												: undefined
+										}
+										onSelect={(date) => {
+											if (date) {
+												field.onChange(
+													dateToUTC(tzdate(date, user?.timezone || 'UTC'))
+												);
+											}
+										}}
+										disabled={(date) =>
+											date < new Date() ||
+											date < new Date("1900-01-01")
+										}
+										initialFocus
+										className="
+											[&_.rdp-caption_label]:hidden
+											[&_.rdp-caption]:flex [&_.rdp-caption]:gap-2 [&_.rdp-caption]:items-center
+											[&_.rdp-caption_dropdowns]:flex [&_.rdp-caption_dropdowns]:gap-2 [&_.rdp-caption_dropdowns]:items-center
+											[&_.rdp-caption>*:first-child]:hidden
+											[&_.text-sm] [&_.font-medium]:hidden
+											[&_.rdp-nav]:hidden
+											[&_.rdp-vhidden]:hidden
+											[&_.rdp-dropdown]:bg-popover [&_.rdp-dropdown]:border [&_.rdp-dropdown]:border-border
+											[&_.rdp-dropdown]:rounded-md [&_.rdp-dropdown]:shadow-sm [&_.rdp-dropdown]:p-1
+											[&_.rdp-dropdown]:text-sm [&_.rdp-dropdown]:min-w-[120px] [&_.rdp-dropdown]:max-h-[200px]
+											[&_.rdp-dropdown]:overflow-y-auto [&_.rdp-dropdown]:scrollbar-thin
+											[&_.rdp-dropdown]:scrollbar-thumb-border [&_.rdp-dropdown]:scrollbar-track-transparent
+										"
+										fromYear={new Date().getFullYear()}
+										toYear={new Date().getFullYear() + 10}
+										captionLayout="dropdown"
 									/>
 								</PopoverContent>
 							</Popover>
@@ -553,7 +601,7 @@ export function SubscriptionForm({
 					name="paymentMethod"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Payment Method</FormLabel>
+							<FormLabel>{t("subscription.paymentMethod")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={(value) =>
@@ -565,7 +613,7 @@ export function SubscriptionForm({
 									defaultValue={field.value || ""}
 								>
 									<SelectTrigger className="w-full">
-										<SelectValue placeholder="Select payment method" />
+										<SelectValue placeholder={t("subscription.placeholder.selectPaymentMethod")} />
 									</SelectTrigger>
 									<SelectContent>
 										<SelectItem value="none">
@@ -592,7 +640,7 @@ export function SubscriptionForm({
 					name="urlLink"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>URL</FormLabel>
+							<FormLabel>{t("subscription.urlLink")}</FormLabel>
 							<FormControl>
 								<Input {...field} />
 							</FormControl>
@@ -606,14 +654,14 @@ export function SubscriptionForm({
 					name="categoryId"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Category</FormLabel>
+							<FormLabel>{t("subscription.category")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={field.onChange}
 									value={field.value ?? undefined}
 								>
 									<SelectTrigger className="w-full">
-										<SelectValue placeholder="Select a category" />
+										<SelectValue placeholder={t("subscription.placeholder.selectCategory")} />
 									</SelectTrigger>
 									<SelectContent>
 										<SelectItem value="none">
@@ -646,7 +694,7 @@ export function SubscriptionForm({
 					render={({ field }) => (
 						<FormItem className="col-span-2">
 							<div className="flex items-center justify-between mb-2">
-								<FormLabel>Notes</FormLabel>
+								<FormLabel>{t("subscription.notes")}</FormLabel>
 								<FormField
 									control={form.control}
 									name="notesIncluded"

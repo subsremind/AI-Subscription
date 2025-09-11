@@ -34,94 +34,95 @@ export const featureTabs: Array<{
 		docsLink?: string;
 	}[];
 }> = [
-	{
-		id: "feature1",
-		title: "Feature 1",
-		icon: StarIcon,
-		subtitle: "Do more with our amazing SaaS.",
-		description:
-			"This is a brilliant feature. And below you can see some reasons why. This is basically just a dummy text.",
-		stack: [],
-		image: heroImage,
-		imageBorder: false,
-		highlights: [
-			{
-				title: "Benefit 1",
-				description:
-					"This is an awesome benefit. And below you can see some reasons why. This is basically just a dummy text.",
-				icon: WandIcon,
-			},
-			{
-				title: "Benefit 2",
-				description:
-					"This is an awesome benefit. And below you can see some reasons why. This is basically just a dummy text.",
-				icon: ComputerIcon,
-			},
-			{
-				title: "Benefit 3",
-				description:
-					"This is an awesome benefit. And below you can see some reasons why. This is basically just a dummy text.",
-				icon: MobileIcon,
-			},
-		],
+{
+	id: "reminders",
+	title: "Multi-Channel Reminders",
+	icon: StarIcon,
+	subtitle: "Get notified via your favorite platforms before subscription renewals",
+	description:
+	"Never miss a subscription renewal again with our multi-channel reminder system. We send alerts to Teams, Slack, SMS, email, and more, ensuring you always have the chance to review and manage your subscriptions before they auto-renew.",
+	stack: [],
+	image: heroImage,
+	imageBorder: false,
+	highlights: [
+		{
+			title: "Cross-Platform Alerts",
+			description:
+			"Receive reminders on Teams, Slack, SMS, email, or your preferred communication platform. We integrate with the tools you already use daily.",
+			icon: WandIcon,
+		},
+		{
+			title: "Customizable Timing",
+			description:
+			"Set reminder intervals that work best for you - choose to be notified 7 days, 3 days, or even 24 hours before your subscription renews.",
+			icon: ComputerIcon,
+		},
+		{
+			title: "Priority Notifications",
+			description:
+			"We automatically flag high-cost or rarely-used subscriptions for special attention, ensuring you don't overlook important renewal decisions.",
+			icon: MobileIcon,
+		},
+	],
 	},
 	{
-		id: "feature2",
-		title: "Feature 2",
+		id: "ai-import",
+		title: "AI-Powered Import",
 		icon: CloudIcon,
-		subtitle: "Your SaaS can also do this.",
-		description: "Another dummy text for another feature.",
+		subtitle: "Automatically detect and organize your subscriptions",
+		description:
+		"Our advanced AI technology scans your emails, bank statements, and payment records to automatically identify and import all your subscription information. Say goodbye to manual data entry and scattered subscription records.",
 		stack: [],
 		image: heroImage,
 		imageBorder: false,
 		highlights: [
 			{
-				title: "Benefit 1",
+				title: "Smart Payment Detection",
 				description:
-					"This is an awesome benefit. And below you can see some reasons why. This is basically just a dummy text.",
+				"Automatically identifies recurring payments from bank statements and credit card bills, even when the merchant name differs slightly from the subscription service.",
 				icon: WandIcon,
 			},
 			{
-				title: "Benefit 2",
+				title: "Email Scan Automation",
 				description:
-					"This is an awesome benefit. And below you can see some reasons why. This is basically just a dummy text.",
+				"Our AI reviews your email inbox to discover subscription confirmations, payment receipts, and service updates from various providers.",
 				icon: ComputerIcon,
 			},
 			{
-				title: "Benefit 3",
+				title: "Data Accuracy Assurance",
 				description:
-					"This is an awesome benefit. And below you can see some reasons why. This is basically just a dummy text.",
+				"Cross-references multiple data sources to ensure accurate subscription details, including exact pricing, billing cycles, and service tiers.",
 				icon: MobileIcon,
 			},
 		],
-	},
+		},
 	{
-		id: "feature3",
-		title: "Feature 3",
+		id: "ai-analysis",
+		title: "AI Subscription Optimizer",
 		icon: PaperclipIcon,
-		subtitle: "We even got a third one.",
+		subtitle: "Cut costs with AI-driven subscription insights",
 		description:
-			"Of course your SaaS will have more features than this, but this is just a dummy text.",
+		"Leverage our AI analytics to understand your subscription usage patterns and receive personalized recommendations for more cost-effective alternatives. The system learns from your behavior to suggest optimal plans that save you money without sacrificing the features you need.",
 		stack: [],
 		image: heroImage,
 		imageBorder: false,
 		highlights: [
 			{
-				title: "Benefit 1",
+				title: "Personalized Reports",
 				description:
-					"This is an awesome benefit. And below you can see some reasons why. This is basically just a dummy text.",
+				"Generates detailed usage reports highlighting underutilized features and overpaid services, complete with visual charts and savings estimates.",
 				icon: WandIcon,
 			},
 			{
-				title: "Benefit 2",
+				title: "Alternative Recommendations",
 				description:
-					"This is an awesome benefit. And below you can see some reasons why. This is basically just a dummy text.",
+				"Our AI suggests cheaper or more suitable alternatives based on your actual usage patterns, highlighting features you actually use versus those you're paying for but never utilize.",
 				icon: ComputerIcon,
 			},
 			{
-				title: "Benefit 3",
+				title: "Cost Trend Analysis",
 				description:
-					"This is an awesome benefit. And below you can see some reasons why. This is basically just a dummy text.",
+				"Tracks how your subscription costs have changed over time and projects future expenses, helping you make informed decisions about which subscriptions to keep, upgrade, or cancel.",
 				icon: MobileIcon,
 			},
 		],
