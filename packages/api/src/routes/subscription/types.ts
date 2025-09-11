@@ -29,7 +29,7 @@ export const SubscriptionCreateInput = z.object({
   frequency: z.number(),
   value: z.number(),
   currency: z.string(),
-  cycle: z.string(),
+  cycle: z.enum(["Daily", "Weekly", "Monthly", "Yearly"]),
   type: z.string(),
   recurring: z.boolean(),
   urlLink: z.string(),
